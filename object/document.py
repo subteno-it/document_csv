@@ -63,6 +63,7 @@ class import_list(osv.osv):
         'csv_esc': fields.char('Escape', size=1),
         'encoding': fields.selection(_encoding, 'Encoding'),
         'line_ids': fields.one2many('document.import.list.line','list_id', 'Lines'),
+        'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
     }
 
     _defaults = {
@@ -80,9 +81,47 @@ class ir_attachment(osv.osv):
     """Inherit this class to made the CSV treatment"""
     _inherit = 'ir.attachment'
 
-    def create(cr, uid, vals, context=None):
+    def create(self, cr, uid, vals, context=None):
         if not context: context={}
-        return super(ir_attachment, self).create(cr, uid, vals, context)
+        res = super(ir_attachment, self).create(cr, uid, vals, context)
+        print '-----\nCREATE %r' % vals
+        print 'CONTEXT %s' % context
+        print 'RES %r' % res
+        return res
+
+    def write(self, cr, uid, ids, vals, context=None):
+        if not context: context={}
+        res = super(ir_attachment, self).write(cr, uid, ids, vals, context)
+        print '-------\nWRITE %r' % vals
+        print 'RES %r' % res
+        if res:
+            # the file are store successfully, we can 
+            # for each file import, check if there insert in
+            # import directory
+            data_obj = self.pool.get('ir.model.data')
+            import_obj = self.pool.get('document.import.list')
+            for f in ids:
+                result = data_obj._get_id(cr, uid, 'document_csv', 'dir_root_import')
+                attch_id = data_obj.read(cr, uid, result, ['res_id'])['res_id']
+                print 'attch_id: %r' % attch_id
+                dir_id = self.read(cr, uid, ids, ['parent_id'], context=context)[0]['parent_id'][0]
+                print 'dir_id: %r' % dir_id
+                #                if dir_id == attch_id: 
+                #                    # This is a file to import
+                #                    # search to see if file match with an import treatment
+                #                    args = [('disable','=',False)]
+                #                    imp_ids = import_obj.search(cr, uid, args, context=context)
+                #                    if imp_ids:
+                #                        import glob
+                #                        imp_data = import_obj.read(cr, uid, imp_ids, context=context)
+                #                        print 'IMP_DATA: %r' % imp_data
+                #                        trt = []
+                #                        for i in imp_data:
+                #                            trt[i]={}
+                #                            trt[i]['id'] = i['id']
+                #                            trt[i]['filename'] = glob.glob(i['filename'])
+
+        return res
 
 ir_attachment()
 

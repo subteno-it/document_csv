@@ -13,6 +13,7 @@
             <field name="arch" type="xml">
 
                 <tree string="Import list">
+                    <field name="directory_id" select="1"/>
                     <field name="name"/>
                     <field name="field_id"/>
                     <field name="relation"/>
@@ -50,24 +51,26 @@
             <field name="arch" type="xml">
 
                 <form string="Import list">
-                    <group col="8" colspan="8">
-                            <field name="model_id"/>
-                            <field name="domain"/>
-                            <field name="context"/>
-                            <field name="disable"/>
+                    <group col="6" colspan="6">
+                        <field name="model_id" select="1"/>
+                        <field name="directory_id" select="1"/>
+                        <field name="disable" select="2"/>
+                        <field name="domain"/>
+                        <field name="context"/>
                     </group>
                     <group col="4" colspan="4">
                         <group col="4">
                             <separator string="Log information" colspan="4"/>
                             <field name="err_mail"/>
                             <field name="err_reject"/>
-                            <field name="group_id" colspan="4"/>
+                            <field name="group_id" colspan="4" select="1"/>
                         </group>
                         <group col="4">
                             <separator string="Import file information" colspan="4"/>
                             <field name="filename" colspan="4"/>
                             <field name="csv_sep"/>
                             <field name="csv_esc"/>
+                            <field name="encoding"/>
                         </group>
                     </group>
                     <field name="line_ids" colspan="4" nolabel="1">

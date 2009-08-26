@@ -1,0 +1,231 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* document_csv
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 5.0.3\n"
+"Report-Msgid-Bugs-To: support@openerp.com\n"
+"POT-Creation-Date: 2009-08-25 22:03:07+0000\n"
+"PO-Revision-Date: 2009-08-25 22:03:07+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: document_csv
+#: field:document.import.list,group_id:0
+msgid "Group"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,err_reject:0
+msgid "Reject all lines if there is an error"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,err_reject:0
+msgid "Reject all if error"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,create:0
+msgid "Create entry"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,relation:0
+msgid "Field relation"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,filename:0
+msgid "Filename"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,field_id:0
+msgid "Field"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.actions.act_window,name:document_csv.action_document_import_list
+#: model:ir.ui.menu,name:document_csv.menu_document_import_list
+msgid "Document import list"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+#: view:document.import.list.line:0
+msgid "Import list"
+msgstr ""
+
+#. module: document_csv
+#: constraint:ir.actions.act_window:0
+msgid "Invalid model name in the action definition."
+msgstr ""
+
+#. module: document_csv
+#: constraint:ir.model:0
+msgid "The Object name must start with x_ and not contain any special character !"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,err_mail:0
+msgid "The log file was send to all users of the groupes"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,model_id:0
+msgid "Model"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Columns"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Import file information"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.module.module,shortdesc:document_csv.module_meta_information
+msgid "Import csv using document management"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,disable:0
+msgid "Uncheck this, if you want to disable it"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,name:0
+msgid "Field name"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list.line,relation:0
+msgid "Specify which field is used to match this field in relation"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,disable:0
+msgid "Disable"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Log information"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,list_id:0
+msgid "Line"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "Latin 1"
+msgstr ""
+
+#. module: document_csv
+#: constraint:ir.ui.view:0
+msgid "Invalid XML for View Architecture!"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,context:0
+msgid "this part complete the original context"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,line_ids:0
+msgid "Lines"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,err_mail:0
+msgid "Send log by mail"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,csv_sep:0
+msgid "Separator"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,context:0
+#: field:document.import.list.line,context:0
+msgid "Context"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list.line,uniq:0
+msgid "If check, the field relation must be unique"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,group_id:0
+msgid "Group use for sending email"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,domain:0
+msgid "Domain"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list.line,create:0
+msgid "If check, if entry doesn't exist, it must be created"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,encoding:0
+msgid "Encoding"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,uniq:0
+msgid "Uniqueness"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.model,name:document_csv.model_document_import_list
+msgid "Document importation list"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.module.module,description:document_csv.module_meta_information
+msgid "\n"
+"    "
+msgstr ""
+
+#. module: document_csv
+#: model:ir.model,name:document_csv.model_document_import_list_line
+msgid "Document importation list line"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,filename:0
+msgid "Indique the name of the file, or regexp that math to the result"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "CP 850 IBM"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,csv_esc:0
+msgid "Escape"
+msgstr ""
+

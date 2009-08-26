@@ -42,6 +42,7 @@
         #'wizard/wizard.xml',
         #'report/report.xml',
         'view/document.xml',
+        'data/directory.xml',
     ],
     'demo_xml': [],
     'installable': True,

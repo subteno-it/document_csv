@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- ********************************************************************** -->
+        <!-- ** Add root path for import system *********************************** -->
+        <!-- ********************************************************************** -->
+        <record model="document.directory" id="dir_root_import">
+            <field name="name">Import</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+        </record>
+
+        <record model="document.directory" id="dir_root_import_source">
+            <field name="name">Source</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+            <field name="parent_id" ref="dir_root_import"/>
+        </record>
+
+        <record model="document.directory" id="dir_root_import_log">
+            <field name="name">Log</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+            <field name="parent_id" ref="dir_root_import"/>
+        </record>
+
+        <record model="document.directory" id="dir_root_import_reject">
+            <field name="name">Reject</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+            <field name="parent_id" ref="dir_root_import"/>
+        </record>
+
+
+    </data>
+</openerp>
