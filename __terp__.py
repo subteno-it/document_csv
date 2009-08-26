@@ -36,7 +36,7 @@
     ],
     'update_xml': [
         #'security/groups.xml',
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         #'data/sequence.xml',
         #'view/menu.xml',
         #'wizard/wizard.xml',
@@ -44,7 +44,9 @@
         'data/directory.xml',
         'view/document.xml',
     ],
-    'demo_xml': [],
+    'demo_xml': [
+        'demo/document.xml',
+    ],
     'installable': True,
     'active': False,
     'license': 'GPL-3',

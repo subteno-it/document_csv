@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="document.directory" id="dir_import_source_partner">
+            <field name="name">Partner</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+            <field name="parent_id" ref="dir_root_import_source"/>
+        </record>
+
+        <record model="document.import.list" id="demo_import_list">
+            <field name="directory_id" ref="dir_import_source_partner"/>
+            <field name="csv_esc">"</field>
+            <field name="csv_sep">"</field>
+            <field name="err_reject" eval="0"/>
+            <field name="err_mail" eval="1"/>
+            <field name="filename">Not necessary</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+        </record>
+
+        <record model="document.import.list.line" id="demo_import_list_1">
+            <field name="list_id" ref="demo_import_list"/>
+            <field name="field_id" ref="base.field_res_partner_name"/>
+            <field name="name">Name</field>
+        </record>
+
+        <record model="document.import.list.line" id="demo_import_list_2">
+            <field name="list_id" ref="demo_import_list"/>
+            <field name="field_id" ref="base.field_res_partner_ref"/>
+            <field name="name">Code</field>
+        </record>
+
+    </data>
+</openerp>
