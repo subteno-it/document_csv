@@ -13,7 +13,6 @@
             <field name="arch" type="xml">
 
                 <tree string="Import list">
-                    <field name="directory_id" select="1"/>
                     <field name="name"/>
                     <field name="field_id"/>
                     <field name="relation"/>
@@ -25,7 +24,6 @@
             </field>
         </record>
 
-
         <record id="view_document_import_list_tree" model="ir.ui.view">
             <field name="name">document.import.list - tree</field>
             <field name="model">document.import.list</field>
@@ -34,6 +32,7 @@
             <field name="arch" type="xml">
 
                 <tree string="Import list">
+                    <field name="directory_id"/>
                     <field name="model_id"/>
                     <field name="domain"/>
                     <field name="context"/>
@@ -52,8 +51,9 @@
 
                 <form string="Import list">
                     <group col="6" colspan="6">
+                        <separator string="General" colspan="6"/>
                         <field name="model_id" select="1"/>
-                        <field name="directory_id" select="1"/>
+                        <field name="directory_id" select="1" domain="[('parent_id','=',%(dir_root_import_source)d)]"/>
                         <field name="disable" select="2"/>
                         <field name="domain"/>
                         <field name="context"/>
