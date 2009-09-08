@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-08-25 22:03:07+0000\n"
-"PO-Revision-Date: 2009-08-25 22:03:07+0000\n"
+"POT-Creation-Date: 2009-09-08 09:47:25+0000\n"
+"PO-Revision-Date: 2009-09-08 09:47:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,6 +26,11 @@ msgid "Reject all lines if there is an error"
 msgstr ""
 
 #. module: document_csv
+#: constraint:document.directory:0
+msgid "Error! You can not create recursive Directories."
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list,err_reject:0
 msgid "Reject all if error"
 msgstr ""
@@ -33,6 +38,11 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list.line,create:0
 msgid "Create entry"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,directory_id:0
+msgid "Select directory where the file was put"
 msgstr ""
 
 #. module: document_csv
@@ -143,6 +153,11 @@ msgid "this part complete the original context"
 msgstr ""
 
 #. module: document_csv
+#: field:document.import.list.line,refkey:0
+msgid "Reference Key"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list,line_ids:0
 msgid "Lines"
 msgstr ""
@@ -169,13 +184,28 @@ msgid "Context"
 msgstr ""
 
 #. module: document_csv
+#: field:document.import.list,directory_id:0
+msgid "Directory"
+msgstr ""
+
+#. module: document_csv
 #: help:document.import.list.line,uniq:0
 msgid "If check, the field relation must be unique"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.list.line,refkey:0
+msgid "If check, this key is equal to ID in manual import"
+msgstr ""
+
+#. module: document_csv
 #: help:document.import.list,group_id:0
 msgid "Group use for sending email"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,uniq:0
+msgid "Uniqueness"
 msgstr ""
 
 #. module: document_csv
@@ -194,8 +224,17 @@ msgid "Encoding"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list.line,uniq:0
-msgid "Uniqueness"
+#: view:document.import.list:0
+msgid "Group to send mail result"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.module.module,description:document_csv.module_meta_information
+msgid "\n"
+"    This module can import CSV file from the DMS\n"
+"    - Put with FTP client in the directory\n"
+"    - The import start automaticaly after full transfert\n"
+"    "
 msgstr ""
 
 #. module: document_csv
@@ -204,9 +243,8 @@ msgid "Document importation list"
 msgstr ""
 
 #. module: document_csv
-#: model:ir.module.module,description:document_csv.module_meta_information
-msgid "\n"
-"    "
+#: view:document.import.list:0
+msgid "General"
 msgstr ""
 
 #. module: document_csv

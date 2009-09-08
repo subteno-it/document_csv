@@ -36,6 +36,7 @@ class import_list_line(osv.osv):
         'uniq': fields.boolean('Uniqueness', help='If check, the field relation must be unique'),
         'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
         'context': fields.char('Context', size=256),
+        'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
     }
 
 import_list_line()
@@ -91,36 +92,88 @@ class ir_attachment(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         if not context: context={}
+        print 'CONTEXT %s' % context
         res = super(ir_attachment, self).write(cr, uid, ids, vals, context)
-        print '-------\nWRITE %r' % vals
-        print 'RES %r' % res
+        print '-------\nWRITE %r\n----' % vals
         if res:
             # the file are store successfully, we can 
             # for each file import, check if there insert in
             # import directory
-            data_obj = self.pool.get('ir.model.data')
+            model_obj = self.pool.get('ir.model')
+            field_obj = self.pool.get('ir.model.fields')
             import_obj = self.pool.get('document.import.list')
+            line_obj = self.pool.get('document.import.list.line')
             for f in ids:
-                result = data_obj._get_id(cr, uid, 'document_csv', 'dir_root_import')
-                attch_id = data_obj.read(cr, uid, result, ['res_id'])['res_id']
-                print 'attch_id: %r' % attch_id
                 dir_id = self.read(cr, uid, ids, ['parent_id'], context=context)[0]['parent_id'][0]
-                print 'dir_id: %r' % dir_id
-                #                if dir_id == attch_id: 
-                #                    # This is a file to import
-                #                    # search to see if file match with an import treatment
-                #                    args = [('disable','=',False)]
-                #                    imp_ids = import_obj.search(cr, uid, args, context=context)
-                #                    if imp_ids:
-                #                        import glob
-                #                        imp_data = import_obj.read(cr, uid, imp_ids, context=context)
-                #                        print 'IMP_DATA: %r' % imp_data
-                #                        trt = []
-                #                        for i in imp_data:
-                #                            trt[i]={}
-                #                            trt[i]['id'] = i['id']
-                #                            trt[i]['filename'] = glob.glob(i['filename'])
 
+                args = [('disable','=',False), ('directory_id','=', dir_id)]
+                imp_ids = import_obj.search(cr, uid, args, context=context)
+                print 'IMP_IDS: %r' % imp_ids
+                if imp_ids:
+                    import csv
+                    import base64
+                    from StringIO import StringIO
+                    imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
+                    #context.update(imp_data.context)
+
+# IMP_DATA: {
+#  'model_id': (58, u'Partner'), 'domain': u'[]', 'err_mail': True, 'encoding': False, 'err_reject': False, 'csv_sep': u'"', 
+#  'filename': u'Not necessary', 'disable': False, 'directory_id': (15, u'Partner'), 'context': u'{}', 'id': 3, 'line_ids': [3, 4], 
+#  'group_id': False, 'csv_esc': u'"'}
+
+                    imp = model_obj.read(cr, uid, imp_data.model_id.id, context=context)
+                    print 'MODEL: %r' % imp['model']
+                    model = imp['model']
+                    # Read all field name in the list
+                    fld=[]
+                    for l in imp_data.line_ids:
+                        line = line_obj.browse(cr, uid, [l.id], context=context)[0]
+                        print 'Line: %s (%r)' % (line.name, line.field_id.name)
+                        args = {
+                            'name': line.name, 
+                            'field': line.field_id.name,
+                            'type': line.field_id.ttype,
+                            'relation': line.field_id.relation,
+                            'key': line.refkey,
+                        }
+                        fld.append(args)
+
+                    print '%r' % fld
+
+                    # Compose the header
+                    header = []
+                    for h in fld:
+                        if h['type'] not in ('many2one','one2many','many2many'):
+                            header.append(h['field'])
+                        else:
+                            print 'Not implemented'
+
+                    print 'Header: %r' % header
+
+                    # Compose the line from the csv import
+                    lines = []
+
+
+                    val = base64.decodestring(vals['datas'])
+                    print 'VAL: %r' % val
+                    fp = StringIO()
+                    fp.write(val)
+                    csvfile = csv.DictReader(fp, delimiter=";")
+                    print 'CSVFILE: %r' % csvfile
+                    for c in csvfile:
+                        print 'FIELD: %r' % c
+                        tmpline = []
+                        for f in fld:
+                            tmpline[f['field']] = c[f['name']]
+                        lines.append(tmpline)
+
+
+                    # After treatment, close th StringIO
+                    fp.close()
+                    print 'LINES: %r' % lines
+
+                    print 'Objet: %r' % imp_data.model_id.model
+                    #obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
         return res
 
 ir_attachment()

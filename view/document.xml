@@ -17,7 +17,7 @@
                     <field name="field_id"/>
                     <field name="relation"/>
                     <field name="uniq"/>
-                    <field name="create"/>
+                    <field name="refkey"/>
                     <field name="context"/>
                 </tree>
 
@@ -36,7 +36,7 @@
                     <field name="model_id"/>
                     <field name="domain"/>
                     <field name="context"/>
-                    <field name="filename"/>
+                    <field name="group_id"/>
                 </tree>
 
             </field>
@@ -50,24 +50,24 @@
             <field name="arch" type="xml">
 
                 <form string="Import list">
-                    <group col="6" colspan="6">
-                        <separator string="General" colspan="6"/>
+                    <group col="8" colspan="8">
+                        <separator string="General" colspan="8"/>
                         <field name="model_id" select="1"/>
-                        <field name="directory_id" select="1" domain="[('parent_id','=',%(dir_root_import_source)d)]"/>
-                        <field name="disable" select="2"/>
                         <field name="domain"/>
                         <field name="context"/>
+                        <field name="disable" select="2"/>
                     </group>
                     <group col="4" colspan="4">
                         <group col="4">
                             <separator string="Log information" colspan="4"/>
                             <field name="err_mail"/>
                             <field name="err_reject"/>
-                            <field name="group_id" colspan="4" select="1"/>
+                            <separator string="Group to send mail result" colspan="4"/>
+                            <field name="group_id" colspan="4" select="1" nolabel="1"/>
                         </group>
                         <group col="4">
                             <separator string="Import file information" colspan="4"/>
-                            <field name="filename" colspan="4"/>
+                            <field name="directory_id" select="1" domain="[('parent_id','=',%(dir_root_import_source)d)]" colspan="4"/>
                             <field name="csv_sep"/>
                             <field name="csv_esc"/>
                             <field name="encoding"/>
@@ -79,7 +79,7 @@
                             <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
                             <field name="relation"/>
                             <field name="uniq"/>
-                            <field name="create"/>
+                            <field name="refkey"/>
                             <field name="context"/>
                         </tree>
                         <form string="Columns">
@@ -88,7 +88,7 @@
                             <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
                             <field name="relation"/>
                             <field name="uniq"/>
-                            <field name="create"/>
+                            <field name="refkey"/>
                         </form>
 
                     </field>
