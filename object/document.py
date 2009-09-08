@@ -173,7 +173,7 @@ class ir_attachment(osv.osv):
                     print 'LINES: %r' % lines
 
                     print 'Objet: %r' % imp_data.model_id.model
-                    #obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                    obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
         return res
 
 ir_attachment()
