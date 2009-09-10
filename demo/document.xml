@@ -15,7 +15,7 @@
             <field name="csv_sep">"</field>
             <field name="err_reject" eval="0"/>
             <field name="err_mail" eval="1"/>
-            <field name="filename">Not necessary</field>
+            <field name="filename">sample-%Y-%m-%d.csv</field>
             <field name="model_id" ref="base.model_res_partner"/>
         </record>
 

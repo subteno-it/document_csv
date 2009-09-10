@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-09-08 09:47:25+0000\n"
-"PO-Revision-Date: 2009-09-08 09:47:25+0000\n"
+"POT-Creation-Date: 2009-09-10 17:14:46+0000\n"
+"PO-Revision-Date: 2009-09-10 17:14:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,6 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list.line,relation:0
 msgid "Field relation"
-msgstr ""
-
-#. module: document_csv
-#: field:document.import.list,filename:0
-msgid "Filename"
 msgstr ""
 
 #. module: document_csv
@@ -98,13 +93,23 @@ msgid "Columns"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Import file information"
+#: field:document.import.list,filename:0
+msgid "Backup filename"
 msgstr ""
 
 #. module: document_csv
 #: model:ir.module.module,shortdesc:document_csv.module_meta_information
 msgid "Import csv using document management"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list.line,refkey:0
+msgid "If check, this key is equal to ID in manual import"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
 msgstr ""
 
 #. module: document_csv
@@ -148,6 +153,11 @@ msgid "Invalid XML for View Architecture!"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.list,backup_dir_id:0
+msgid "Select directory where the backup file was put"
+msgstr ""
+
+#. module: document_csv
 #: help:document.import.list,context:0
 msgid "this part complete the original context"
 msgstr ""
@@ -163,13 +173,25 @@ msgid "Lines"
 msgstr ""
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "UTF 8"
+#: view:document.import.list:0
+msgid "Import file information"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Domain/Context"
 msgstr ""
 
 #. module: document_csv
 #: field:document.import.list,err_mail:0
 msgid "Send log by mail"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,filename:0
+msgid "Indique the name of the file to backup, use:\n"
+"%%Y for year\n"
+"%%m for month"
 msgstr ""
 
 #. module: document_csv
@@ -194,8 +216,8 @@ msgid "If check, the field relation must be unique"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list.line,refkey:0
-msgid "If check, this key is equal to ID in manual import"
+#: view:document.import.list:0
+msgid "Backup"
 msgstr ""
 
 #. module: document_csv
@@ -211,6 +233,11 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list,domain:0
 msgid "Domain"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,backup_dir_id:0
+msgid "Backup directory"
 msgstr ""
 
 #. module: document_csv
@@ -250,11 +277,6 @@ msgstr ""
 #. module: document_csv
 #: model:ir.model,name:document_csv.model_document_import_list_line
 msgid "Document importation list line"
-msgstr ""
-
-#. module: document_csv
-#: help:document.import.list,filename:0
-msgid "Indique the name of the file, or regexp that math to the result"
 msgstr ""
 
 #. module: document_csv

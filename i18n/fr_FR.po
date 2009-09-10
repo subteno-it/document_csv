@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-09-08 09:47:25+0000\n"
-"PO-Revision-Date: 2009-09-08 11:55+0100\n"
+"POT-Creation-Date: 2009-09-10 17:14:46+0000\n"
+"PO-Revision-Date: 2009-09-10 19:17+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,6 @@ msgstr "Sélectionner le répertoire dans lequel le fichier sera déposé"
 #: field:document.import.list.line,relation:0
 msgid "Field relation"
 msgstr "Champ relation"
-
-#. module: document_csv
-#: field:document.import.list,filename:0
-msgid "Filename"
-msgstr "Nom du fichier"
 
 #. module: document_csv
 #: field:document.import.list.line,field_id:0
@@ -97,14 +92,24 @@ msgid "Columns"
 msgstr "Colonnes"
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Import file information"
-msgstr "Information sur l'importation de fichier"
+#: field:document.import.list,filename:0
+msgid "Backup filename"
+msgstr "Nom du fichier d'archivage"
 
 #. module: document_csv
 #: model:ir.module.module,shortdesc:document_csv.module_meta_information
 msgid "Import csv using document management"
 msgstr "Importation CSV en utilisant la gestion documentaire"
+
+#. module: document_csv
+#: help:document.import.list.line,refkey:0
+msgid "If check, this key is equal to ID in manual import"
+msgstr "Si coché, cette clé est équivalent à l'ID de l'import manuel"
+
+#. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
+msgstr "UTF 8"
 
 #. module: document_csv
 #: help:document.import.list,disable:0
@@ -147,6 +152,11 @@ msgid "Invalid XML for View Architecture!"
 msgstr "XML non valide pour l'architecture de la vue"
 
 #. module: document_csv
+#: help:document.import.list,backup_dir_id:0
+msgid "Select directory where the backup file was put"
+msgstr "Choisissez un répertoire de destination pour archiver le fichier"
+
+#. module: document_csv
 #: help:document.import.list,context:0
 msgid "this part complete the original context"
 msgstr "Cette partie complète le contexte originale"
@@ -162,14 +172,29 @@ msgid "Lines"
 msgstr "Lignes"
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "UTF 8"
-msgstr "UTF 8"
+#: view:document.import.list:0
+msgid "Import file information"
+msgstr "Information sur l'importation de fichier"
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Domain/Context"
+msgstr "Domaine/Contexte"
 
 #. module: document_csv
 #: field:document.import.list,err_mail:0
 msgid "Send log by mail"
 msgstr "Envoyer le journal par mail"
+
+#. module: document_csv
+#: help:document.import.list,filename:0
+msgid ""
+"Indique the name of the file to backup, use:\n"
+"%%Y for year\n"
+"%%m for month"
+msgstr ""
+"Indiquez le nom du fichier de sauegarde, utilisez:\n"
+"%%Y pour l'année\%%m pour le mois"
 
 #. module: document_csv
 #: field:document.import.list,csv_sep:0
@@ -193,9 +218,9 @@ msgid "If check, the field relation must be unique"
 msgstr "Si coché, le champ relation doit être unique"
 
 #. module: document_csv
-#: help:document.import.list.line,refkey:0
-msgid "If check, this key is equal to ID in manual import"
-msgstr "Si coché, cette clé est équivalent à l'ID de l'import manuel"
+#: view:document.import.list:0
+msgid "Backup"
+msgstr "Archivage"
 
 #. module: document_csv
 #: help:document.import.list,group_id:0
@@ -211,6 +236,11 @@ msgstr "Unicité"
 #: field:document.import.list,domain:0
 msgid "Domain"
 msgstr "Domain"
+
+#. module: document_csv
+#: field:document.import.list,backup_dir_id:0
+msgid "Backup directory"
+msgstr "Archivage"
 
 #. module: document_csv
 #: help:document.import.list.line,create:0
@@ -258,11 +288,6 @@ msgid "Document importation list line"
 msgstr "Ligne des liste d'importation"
 
 #. module: document_csv
-#: help:document.import.list,filename:0
-msgid "Indique the name of the file, or regexp that math to the result"
-msgstr "Indiquer le nom du fichier, ou la regexp qui correspondra au résultat"
-
-#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "CP 850 IBM"
 msgstr "CP 850 IBM"
@@ -272,6 +297,10 @@ msgstr "CP 850 IBM"
 msgid "Escape"
 msgstr "Caractère échappement"
 
+#~ msgid "Filename"
+#~ msgstr "Nom du fichier"
+#~ msgid "Indique the name of the file, or regexp that math to the result"
+#~ msgstr "Indiquer le nom du fichier, ou la regexp qui correspondra au résultat"
 #~ msgid ""
 #~ "\n"
 #~ "    "

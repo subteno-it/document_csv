@@ -23,6 +23,65 @@
 
 from osv import osv
 from osv import fields
+from tools.translate import _
+import time
+
+_encoding = [
+    ('utf-8', 'UTF 8'),
+    ('cp850', 'CP 850 IBM'),
+    ('iso8859-1','Latin 1'),
+]
+
+class import_list(osv.osv):
+    _name='document.import.list'
+    _description = 'Document importation list'
+
+    _columns = {
+        'model_id': fields.many2one('ir.model','Model', required=True),
+        'domain': fields.char('Domain', size=256),
+        'context': fields.char('Context', size=256, help='this part complete the original context'),
+        'filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'disable': fields.boolean('Disable', help='Uncheck this, if you want to disable it'),
+        'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
+        'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
+        'group_id': fields.many2one('res.groups', 'Group', help='Group use for sending email'),
+        'csv_sep': fields.char('Separator', size=1, required=True),
+        'csv_esc': fields.char('Escape', size=1),
+        'encoding': fields.selection(_encoding, 'Encoding'),
+        'line_ids': fields.one2many('document.import.list.line','list_id', 'Lines'),
+        'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
+        'backup_dir_id': fields.many2one('document.directory','Backup directory', required=True, help='Select directory where the backup file was put'),
+    }
+
+    _defaults = {
+        'domain': lambda *a: '[]',
+        'context': lambda *a: '{}',
+        'disable': lambda *a: True,
+        'csv_sep': lambda *a: ';',
+        'csv_esc': lambda *a: '"',
+    }
+
+    def onchange_context(self, cr, uid, ids, val, context=None):
+        if not context: context = {}
+        warning = {}
+        warning['title'] = _('Error')
+        warning['message'] = _('Bad context value')
+        try:
+            val = eval(val)
+            if not isinstance(val, dict):
+                return {'warning': warning}
+        except SyntaxError, e:
+            print '%s' % e
+            warning['message'] = _('Syntax error')
+            return {'warning': warning}
+        except TypeError, e:
+            warning['message'] = _('The context must be start with <b>{</b> and ending with }\n* %s') % e
+            return {'warning': warning}
+
+
+        return {'warning': False}
+
+import_list()
 
 class import_list_line(osv.osv):
     _name='document.import.list.line'
@@ -40,43 +99,6 @@ class import_list_line(osv.osv):
     }
 
 import_list_line()
-
-_encoding = [
-    ('utf-8', 'UTF 8'),
-    ('cp850', 'CP 850 IBM'),
-    ('iso8859-1','Latin 1'),
-]
-
-class import_list(osv.osv):
-    _name='document.import.list'
-    _description = 'Document importation list'
-
-    _columns = {
-        'model_id': fields.many2one('ir.model','Model', required=True),
-        'domain': fields.char('Domain', size=256),
-        'context': fields.char('Context', size=256, help='this part complete the original context'),
-        'filename': fields.char('Filename', size=128, required=True, help='Indique the name of the file, or regexp that math to the result'),
-        'disable': fields.boolean('Disable', help='Uncheck this, if you want to disable it'),
-        'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
-        'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
-        'group_id': fields.many2one('res.groups', 'Group', help='Group use for sending email'),
-        'csv_sep': fields.char('Separator', size=1, required=True),
-        'csv_esc': fields.char('Escape', size=1),
-        'encoding': fields.selection(_encoding, 'Encoding'),
-        'line_ids': fields.one2many('document.import.list.line','list_id', 'Lines'),
-        'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
-    }
-
-    _defaults = {
-        'domain': lambda *a: '[]',
-        'context': lambda *a: '{}',
-        'disable': lambda *a: True,
-        'csv_sep': lambda *a: ';',
-        'csv_esc': lambda *a: '"',
-    }
-
-import_list()
-
 
 class ir_attachment(osv.osv):
     """Inherit this class to made the CSV treatment"""
@@ -138,7 +160,7 @@ class ir_attachment(osv.osv):
                         }
                         fld.append(args)
 
-                    print '%r' % fld
+                    print 'FLD: %r' % fld
 
                     # Compose the header
                     header = []
@@ -153,8 +175,9 @@ class ir_attachment(osv.osv):
                     # Compose the line from the csv import
                     lines = []
 
-
-                    val = base64.decodestring(vals['datas'])
+                    val = ''
+                    if 'datas' in vals:
+                        val = base64.decodestring(vals['datas'])
                     print 'VAL: %r' % val
                     fp = StringIO()
                     fp.write(val)
@@ -167,13 +190,17 @@ class ir_attachment(osv.osv):
                             tmpline[f['field']] = c[f['name']]
                         lines.append(tmpline)
 
-
                     # After treatment, close th StringIO
                     fp.close()
                     print 'LINES: %r' % lines
 
                     print 'Objet: %r' % imp_data.model_id.model
-                    obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                    # TODO implement global reject or line reject
+                    #obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+
+                    # TODO Deplacement du fichier dans ARCHIVE
+                    print 'Archivage'
+                    self.write(cr, uid, ids, {'name': time.strftime(imp_data.filename), 'parent_id': imp_data.backup_dir_id.id}, context=context)
         return res
 
 ir_attachment()
