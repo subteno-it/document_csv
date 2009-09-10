@@ -30,6 +30,7 @@ _encoding = [
     ('utf-8', 'UTF 8'),
     ('cp850', 'CP 850 IBM'),
     ('iso8859-1','Latin 1'),
+    ('iso8859-15','Latin 9'),
 ]
 
 class import_list(osv.osv):
@@ -75,9 +76,8 @@ class import_list(osv.osv):
             warning['message'] = _('Syntax error')
             return {'warning': warning}
         except TypeError, e:
-            warning['message'] = _('The context must be start with <b>{</b> and ending with }\n* %s') % e
+            warning['message'] = _('The context must be start with { and ending with }\n* %s') % e
             return {'warning': warning}
-
 
         return {'warning': False}
 
@@ -107,14 +107,10 @@ class ir_attachment(osv.osv):
     def create(self, cr, uid, vals, context=None):
         if not context: context={}
         res = super(ir_attachment, self).create(cr, uid, vals, context)
-        print '-----\nCREATE %r' % vals
-        print 'CONTEXT %s' % context
-        print 'RES %r' % res
         return res
 
     def write(self, cr, uid, ids, vals, context=None):
         if not context: context={}
-        print 'CONTEXT %s' % context
         res = super(ir_attachment, self).write(cr, uid, ids, vals, context)
         print '-------\nWRITE %r\n----' % vals
         if res:
@@ -136,15 +132,9 @@ class ir_attachment(osv.osv):
                     import base64
                     from StringIO import StringIO
                     imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
-                    #context.update(imp_data.context)
-
-# IMP_DATA: {
-#  'model_id': (58, u'Partner'), 'domain': u'[]', 'err_mail': True, 'encoding': False, 'err_reject': False, 'csv_sep': u'"', 
-#  'filename': u'Not necessary', 'disable': False, 'directory_id': (15, u'Partner'), 'context': u'{}', 'id': 3, 'line_ids': [3, 4], 
-#  'group_id': False, 'csv_esc': u'"'}
+                    context.update(eval(imp_data.context))
 
                     imp = model_obj.read(cr, uid, imp_data.model_id.id, context=context)
-                    print 'MODEL: %r' % imp['model']
                     model = imp['model']
                     # Read all field name in the list
                     fld=[]
@@ -159,8 +149,6 @@ class ir_attachment(osv.osv):
                             'key': line.refkey,
                         }
                         fld.append(args)
-
-                    print 'FLD: %r' % fld
 
                     # Compose the header
                     header = []
@@ -179,11 +167,18 @@ class ir_attachment(osv.osv):
                     if 'datas' in vals:
                         val = base64.decodestring(vals['datas'])
                     print 'VAL: %r' % val
+
                     fp = StringIO()
                     fp.write(val)
-                    csvfile = csv.DictReader(fp, delimiter=";")
+                    sep = chr(ord(imp_data.csv_sep[0]))
+                    esc=None
+                    if imp_data.csv_esc:
+                        esc = chr(ord(imp_data.csv_esc[0]))
+
+                    csvfile = csv.DictReader(fp, delimiter=sep)
                     print 'CSVFILE: %r' % csvfile
                     for c in csvfile:
+                        print 'TEST 1'
                         print 'FIELD: %r' % c
                         tmpline = []
                         for f in fld:
@@ -195,10 +190,8 @@ class ir_attachment(osv.osv):
                     print 'LINES: %r' % lines
 
                     print 'Objet: %r' % imp_data.model_id.model
-                    # TODO implement global reject or line reject
-                    #obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                    obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
 
-                    # TODO Deplacement du fichier dans ARCHIVE
                     print 'Archivage'
                     self.write(cr, uid, ids, {'name': time.strftime(imp_data.filename), 'parent_id': imp_data.backup_dir_id.id}, context=context)
         return res
