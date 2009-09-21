@@ -24,6 +24,7 @@
 from osv import osv
 from osv import fields
 from tools.translate import _
+import netsvc
 import time
 
 _encoding = [
@@ -67,17 +68,20 @@ class import_list(osv.osv):
         warning = {}
         warning['title'] = _('Error')
         warning['message'] = _('Bad context value')
-        try:
-            val = eval(val)
-            if not isinstance(val, dict):
+        print 'VAL: (%r)' % val
+        print 'IDS: (%r)' % ids
+        if ids and not val == '{}':
+            try:
+                val = eval(val)
+                if not isinstance(val, dict):
+                    return {'warning': warning}
+            except SyntaxError, e:
+                print '%s' % e
+                warning['message'] = _('Syntax error')
                 return {'warning': warning}
-        except SyntaxError, e:
-            print '%s' % e
-            warning['message'] = _('Syntax error')
-            return {'warning': warning}
-        except TypeError, e:
-            warning['message'] = _('The context must be start with { and ending with }\n* %s') % e
-            return {'warning': warning}
+            except TypeError, e:
+                warning['message'] = _('The context must be start with { and ending with }\n* %s') % e
+                return {'warning': warning}
 
         return {'warning': False}
 
@@ -114,6 +118,7 @@ class ir_attachment(osv.osv):
         res = super(ir_attachment, self).write(cr, uid, ids, vals, context)
         print '-------\nWRITE %r\n----' % vals
         if res:
+            logger = netsvc.Logger()
             # the file are store successfully, we can 
             # for each file import, check if there insert in
             # import directory
@@ -128,6 +133,7 @@ class ir_attachment(osv.osv):
                 imp_ids = import_obj.search(cr, uid, args, context=context)
                 print 'IMP_IDS: %r' % imp_ids
                 if imp_ids:
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: begin import new file')
                     import csv
                     import base64
                     from StringIO import StringIO
@@ -194,6 +200,9 @@ class ir_attachment(osv.osv):
 
                     print 'Archivage'
                     self.write(cr, uid, ids, {'name': time.strftime(imp_data.filename), 'parent_id': imp_data.backup_dir_id.id}, context=context)
+
+                    # Add trace on the log, when file was integrate
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import new file')
         return res
 
 ir_attachment()

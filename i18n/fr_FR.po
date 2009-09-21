@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-09-10 17:14:46+0000\n"
-"PO-Revision-Date: 2009-09-10 19:17+0100\n"
+"POT-Creation-Date: 2009-09-21 16:14:46+0000\n"
+"PO-Revision-Date: 2009-09-21 18:20+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -72,6 +72,11 @@ msgid "Invalid model name in the action definition."
 msgstr "Nom de modèle invalide pour la définition de l'action"
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "%S for Second (eg: 01)"
+msgstr "%S pour les secondes (ex: 01)"
+
+#. module: document_csv
 #: constraint:ir.model:0
 msgid "The Object name must start with x_ and not contain any special character !"
 msgstr "Le nom de l'objet doit commencer avec x_ et ne pas contenir de charactères spéciaux !"
@@ -107,9 +112,14 @@ msgid "If check, this key is equal to ID in manual import"
 msgstr "Si coché, cette clé est équivalent à l'ID de l'import manuel"
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "UTF 8"
-msgstr "UTF 8"
+#: view:document.import.list:0
+msgid "%M for Minutes (eg: 59)"
+msgstr "%M pour les Minutes (eg: 59)"
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Legend to format filename"
+msgstr "Légende pour le format du nom de fichier"
 
 #. module: document_csv
 #: help:document.import.list,disable:0
@@ -133,13 +143,23 @@ msgstr "Désactivé"
 
 #. module: document_csv
 #: view:document.import.list:0
-msgid "Log information"
-msgstr "Journal d'information"
+msgid "%d for Day (eg: 01)"
+msgstr "%d pour les Jour (eg: 01)"
 
 #. module: document_csv
 #: field:document.import.list.line,list_id:0
 msgid "Line"
 msgstr "Ligne"
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%H for Hour (eg: 14)"
+msgstr "%H pour les Heures (eg: 14)"
+
+#. module: document_csv
+#: field:document.import.list.line,refkey:0
+msgid "Reference Key"
+msgstr "Clé de référence"
 
 #. module: document_csv
 #: selection:document.import.list,encoding:0
@@ -162,9 +182,14 @@ msgid "this part complete the original context"
 msgstr "Cette partie complète le contexte originale"
 
 #. module: document_csv
-#: field:document.import.list.line,refkey:0
-msgid "Reference Key"
-msgstr "Clé de référence"
+#: selection:document.import.list,encoding:0
+msgid "Latin 9"
+msgstr "Latin 9"
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Log information"
+msgstr "Journal d'information"
 
 #. module: document_csv
 #: field:document.import.list,line_ids:0
@@ -194,7 +219,7 @@ msgid ""
 "%%m for month"
 msgstr ""
 "Indiquez le nom du fichier de sauegarde, utilisez:\n"
-"%%Y pour l'année\%%m pour le mois"
+"%%Y pour l'année\\%%m pour le mois"
 
 #. module: document_csv
 #: field:document.import.list,csv_sep:0
@@ -243,6 +268,11 @@ msgid "Backup directory"
 msgstr "Archivage"
 
 #. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
+msgstr "UTF 8"
+
+#. module: document_csv
 #: help:document.import.list.line,create:0
 msgid "If check, if entry doesn't exist, it must be created"
 msgstr "Si coché, si l'entrée n'existe pas, elle sera crée"
@@ -288,6 +318,11 @@ msgid "Document importation list line"
 msgstr "Ligne des liste d'importation"
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "%m for Month (eg: 09)"
+msgstr "%m pour le Mois (ex: 09)"
+
+#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "CP 850 IBM"
 msgstr "CP 850 IBM"
@@ -297,12 +332,11 @@ msgstr "CP 850 IBM"
 msgid "Escape"
 msgstr "Caractère échappement"
 
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%Y for Year (eg: 2009)"
+msgstr "%Y l'année (ex: 2009)"
+
 #~ msgid "Filename"
 #~ msgstr "Nom du fichier"
-#~ msgid "Indique the name of the file, or regexp that math to the result"
-#~ msgstr "Indiquer le nom du fichier, ou la regexp qui correspondra au résultat"
-#~ msgid ""
-#~ "\n"
-#~ "    "
-#~ msgstr "\n"
 

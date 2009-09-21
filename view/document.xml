@@ -77,8 +77,15 @@
                                     <field name="csv_esc"/>
                                     <field name="encoding"/>
                                     <separator string="Backup" colspan="4"/>
-                                    <field name="filename" colspan="4"/>
                                     <field name="backup_dir_id" colspan="4"/>
+                                    <field name="filename" colspan="4"/>
+                                    <separator string="Legend to format filename" colspan="4"/>
+                                    <label align="0.0" string="%%Y for Year (eg: 2009)" colspan="2"/>
+                                    <label align="0.0" string="%%H for Hour (eg: 14)" colspan="2"/>
+                                    <label align="0.0" string="%%m for Month (eg: 09)" colspan="2"/>
+                                    <label align="0.0" string="%%M for Minutes (eg: 59)" colspan="2"/>
+                                    <label align="0.0" string="%%d for Day (eg: 01)" colspan="2"/>
+                                    <label align="0.0" string="%%S for Second (eg: 01)" colspan="2"/>
                                 </group>
                             </group>
                         </page>

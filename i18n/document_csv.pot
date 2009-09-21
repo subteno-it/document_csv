@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 5.0.3\n"
+"Project-Id-Version: OpenERP Server 5.0.5-bzr\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-09-10 17:14:46+0000\n"
-"PO-Revision-Date: 2009-09-10 17:14:46+0000\n"
+"POT-Creation-Date: 2009-09-21 16:14:46+0000\n"
+"PO-Revision-Date: 2009-09-21 16:14:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -73,6 +73,11 @@ msgid "Invalid model name in the action definition."
 msgstr ""
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "%S for Second (eg: 01)"
+msgstr ""
+
+#. module: document_csv
 #: constraint:ir.model:0
 msgid "The Object name must start with x_ and not contain any special character !"
 msgstr ""
@@ -108,8 +113,13 @@ msgid "If check, this key is equal to ID in manual import"
 msgstr ""
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "UTF 8"
+#: view:document.import.list:0
+msgid "%M for Minutes (eg: 59)"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Legend to format filename"
 msgstr ""
 
 #. module: document_csv
@@ -134,12 +144,22 @@ msgstr ""
 
 #. module: document_csv
 #: view:document.import.list:0
-msgid "Log information"
+msgid "%d for Day (eg: 01)"
 msgstr ""
 
 #. module: document_csv
 #: field:document.import.list.line,list_id:0
 msgid "Line"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%H for Hour (eg: 14)"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list.line,refkey:0
+msgid "Reference Key"
 msgstr ""
 
 #. module: document_csv
@@ -163,8 +183,13 @@ msgid "this part complete the original context"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list.line,refkey:0
-msgid "Reference Key"
+#: selection:document.import.list,encoding:0
+msgid "Latin 9"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Log information"
 msgstr ""
 
 #. module: document_csv
@@ -241,6 +266,11 @@ msgid "Backup directory"
 msgstr ""
 
 #. module: document_csv
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
+msgstr ""
+
+#. module: document_csv
 #: help:document.import.list.line,create:0
 msgid "If check, if entry doesn't exist, it must be created"
 msgstr ""
@@ -280,6 +310,11 @@ msgid "Document importation list line"
 msgstr ""
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "%m for Month (eg: 09)"
+msgstr ""
+
+#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "CP 850 IBM"
 msgstr ""
@@ -287,5 +322,10 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list,csv_esc:0
 msgid "Escape"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%Y for Year (eg: 2009)"
 msgstr ""
 
