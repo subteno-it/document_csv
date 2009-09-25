@@ -24,6 +24,7 @@
 from osv import osv
 from osv import fields
 from tools.translate import _
+from tools import ustr
 import netsvc
 import time
 
@@ -41,7 +42,7 @@ class import_list(osv.osv):
     _columns = {
         'model_id': fields.many2one('ir.model','Model', required=True),
         'domain': fields.char('Domain', size=256),
-        'context': fields.char('Context', size=256, help='this part complete the original context'),
+        'ctx': fields.char('Context', size=256, help='this part complete the original context'),
         'filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'disable': fields.boolean('Disable', help='Uncheck this, if you want to disable it'),
         'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
@@ -57,7 +58,7 @@ class import_list(osv.osv):
 
     _defaults = {
         'domain': lambda *a: '[]',
-        'context': lambda *a: '{}',
+        'ctx': lambda *a: '{}',
         'disable': lambda *a: True,
         'csv_sep': lambda *a: ';',
         'csv_esc': lambda *a: '"',
@@ -68,19 +69,16 @@ class import_list(osv.osv):
         warning = {}
         warning['title'] = _('Error')
         warning['message'] = _('Bad context value')
-        print 'VAL: (%r)' % val
-        print 'IDS: (%r)' % ids
         if ids and not val == '{}':
             try:
                 val = eval(val)
                 if not isinstance(val, dict):
                     return {'warning': warning}
             except SyntaxError, e:
-                print '%s' % e
-                warning['message'] = _('Syntax error')
+                warning['message'] = _('Syntax error\n* %r') % e
                 return {'warning': warning}
             except TypeError, e:
-                warning['message'] = _('The context must be start with { and ending with }\n* %s') % e
+                warning['message'] = _('The context must be start with { and ending with }\n* %r') % e
                 return {'warning': warning}
 
         return {'warning': False}
@@ -88,6 +86,10 @@ class import_list(osv.osv):
 import_list()
 
 class import_list_line(osv.osv):
+    """
+    Describe each columns from the CSV file and affect to a field in object
+    - 
+    """
     _name='document.import.list.line'
     _description='Document importation list line'
 
@@ -116,7 +118,6 @@ class ir_attachment(osv.osv):
     def write(self, cr, uid, ids, vals, context=None):
         if not context: context={}
         res = super(ir_attachment, self).write(cr, uid, ids, vals, context)
-        print '-------\nWRITE %r\n----' % vals
         if res:
             logger = netsvc.Logger()
             # the file are store successfully, we can 
@@ -131,22 +132,22 @@ class ir_attachment(osv.osv):
 
                 args = [('disable','=',False), ('directory_id','=', dir_id)]
                 imp_ids = import_obj.search(cr, uid, args, context=context)
-                print 'IMP_IDS: %r' % imp_ids
                 if imp_ids:
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: begin import new file')
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: begin import new file '.ljust(80, '*'))
                     import csv
                     import base64
                     from StringIO import StringIO
                     imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
-                    context.update(eval(imp_data.context))
+                    context.update(eval(imp_data.ctx))
 
                     imp = model_obj.read(cr, uid, imp_data.model_id.id, context=context)
                     model = imp['model']
+
                     # Read all field name in the list
+                    uniq_key = False
                     fld=[]
                     for l in imp_data.line_ids:
                         line = line_obj.browse(cr, uid, [l.id], context=context)[0]
-                        print 'Line: %s (%r)' % (line.name, line.field_id.name)
                         args = {
                             'name': line.name, 
                             'field': line.field_id.name,
@@ -155,16 +156,24 @@ class ir_attachment(osv.osv):
                             'key': line.refkey,
                         }
                         fld.append(args)
+                        if line.refkey:
+                            uniq_key = line.name
 
                     # Compose the header
                     header = []
+                    if uniq_key:
+                        header.append(u'id')
                     for h in fld:
                         if h['type'] not in ('many2one','one2many','many2many'):
                             header.append(h['field'])
                         else:
-                            print 'Not implemented'
+                            #print 'C'
+                            pass
 
-                    print 'Header: %r' % header
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Object: %s' % imp_data.model_id.model)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Context: %r' % context)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Columns header: %r' % header)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Unique key (XML id): %r' % uniq_key)
 
                     # Compose the line from the csv import
                     lines = []
@@ -172,37 +181,54 @@ class ir_attachment(osv.osv):
                     val = ''
                     if 'datas' in vals:
                         val = base64.decodestring(vals['datas'])
-                    print 'VAL: %r' % val
 
                     fp = StringIO()
                     fp.write(val)
+                    fp.seek(0)
                     sep = chr(ord(imp_data.csv_sep[0]))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Separator: %s ' % imp_data.csv_sep)
                     esc=None
                     if imp_data.csv_esc:
                         esc = chr(ord(imp_data.csv_esc[0]))
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Escape: %s ' % imp_data.csv_esc)
 
-                    csvfile = csv.DictReader(fp, delimiter=sep)
-                    print 'CSVFILE: %r' % csvfile
+                    csvfile = csv.DictReader(fp, delimiter=sep, quotechar=esc)
                     for c in csvfile:
-                        print 'TEST 1'
-                        print 'FIELD: %r' % c
                         tmpline = []
+                        if uniq_key:
+                            tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.','_') ,str(c[uniq_key])))
                         for f in fld:
-                            tmpline[f['field']] = c[f['name']]
+                            tmpline.append(c[f['name']])
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                         lines.append(tmpline)
 
                     # After treatment, close th StringIO
                     fp.close()
-                    print 'LINES: %r' % lines
 
-                    print 'Objet: %r' % imp_data.model_id.model
-                    obj = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: start import')
+                    try:
+                        res = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                        if res[0] >= 0:
+                            logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
+                        else:
+                            d = ''
+                            for key,val in res[1].items():
+                                d += ('\t%s: %s\n' % (str(key),str(val)))
+                            error = u'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
+                            logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
 
-                    print 'Archivage'
-                    self.write(cr, uid, ids, {'name': time.strftime(imp_data.filename), 'parent_id': imp_data.backup_dir_id.id}, context=context)
+                    except Exception, e:
+                        cr.rollback()
+                        logger.notifyChannel('import', netsvc.LOG_ERROR, '%r' % e)
+
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
+
+                    bck_file = time.strftime(imp_data.filename)
+                    self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: backup file: %s ' % bck_file)
 
                     # Add trace on the log, when file was integrate
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import new file')
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import new file '.ljust(80, '*'))
         return res
 
 ir_attachment()

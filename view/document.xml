@@ -35,7 +35,7 @@
                     <field name="directory_id"/>
                     <field name="model_id"/>
                     <field name="domain"/>
-                    <field name="context"/>
+                    <field name="ctx"/>
                     <field name="group_id"/>
                 </tree>
 
@@ -62,7 +62,7 @@
                                 <group col="6" colspan="4">
                                     <separator string="Domain/Context" colspan="6"/>
                                     <field name="domain" colspan="6"/>
-                                    <field name="context" on_change="onchange_context(context)" colspan="6"/>
+                                    <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
                                 </group>
                                 <group col="4">
                                     <separator string="Log information" colspan="4"/>
