@@ -27,6 +27,7 @@ from tools.translate import _
 from tools import ustr
 import netsvc
 import time
+import pooler
 
 _encoding = [
     ('utf-8', 'UTF 8'),
@@ -206,19 +207,23 @@ class ir_attachment(osv.osv):
                     fp.close()
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: start import')
+                    # Use new cusrsor to itégrate the data
+                    cr_imp = pooler.get_db(cr.dbname).cursor()
                     try:
-                        res = self.pool.get(imp_data.model_id.model).import_data(cr, uid, header, lines, 'init', '', False, context=context)
+                        res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
                         if res[0] >= 0:
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
                         else:
+                            cr_imp.close()
                             d = ''
                             for key,val in res[1].items():
                                 d += ('\t%s: %s\n' % (str(key),str(val)))
-                            error = u'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
+                            error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
                             logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
 
                     except Exception, e:
-                        cr.rollback()
+                        cr_imp.rollback()
+                        cr_imp.close()
                         logger.notifyChannel('import', netsvc.LOG_ERROR, '%r' % e)
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
