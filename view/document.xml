@@ -86,10 +86,15 @@
                         <page string="Logging">
                             <group colspan="4" col="6">
                                     <separator string="Log information" colspan="6"/>
-                                    <field name="err_mail"/>
                                     <field name="group_id" select="1" nolabel="1" attrs="{'required': [('err_mail','=',True)]}"/>
                             </group>
-                            <group colspan="4" col="8">
+                            <group colspan="4" col="12">
+                                <group col="4">
+                                    <separator string="Log" colspan="4"/>
+                                    <field name="err_mail"/>
+                                    <field name="log_dir_id" colspan="4" domain="[('type','=','directory')]"/>
+                                    <field name="log_filename" colspan="4"/>
+                                </group>
                                 <group col="4">
                                     <separator string="Reject" colspan="4"/>
                                     <field name="err_reject" colspan="4"/>
@@ -98,6 +103,7 @@
                                 </group>
                                 <group col="4">
                                     <separator string="Backup" colspan="4"/>
+                                    <field name="backup" colspan="4"/>
                                     <field name="backup_dir_id" colspan="4" domain="[('type','=','directory')]"/>
                                     <field name="backup_filename" colspan="4"/>
                                 </group>

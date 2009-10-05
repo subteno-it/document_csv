@@ -73,8 +73,11 @@ class import_list(osv.osv):
         'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
         'backup_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'backup_dir_id': fields.many2one('document.directory', 'Backup directory', required=True, help='Select directory where the backup file was put'),
-        'reject_filename': fields.char('Reject filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'reject_filename': fields.char('Reject filename', size=128, required=True, help='Indique the name of the reject file, use:\n%%Y for year\n%%m for month'),
         'reject_dir_id': fields.many2one('document.directory', 'Reject directory', required=True, help='Select the directory wher the reject file was put'),
+        'log_filename': fields.char('Log filename', size=128, required=True, help='Indique the name of the log file, use:\n%%Y for year\n%%m for month'),
+        'log_dir_id': fields.many2one('document.directory', 'Log directory', required=True, help='Select directory where the backup file was put'),
+        'backup': fields.boolean('Store the backup', help='If check, the original file is backup, before remove from the directory'),
     }
 
     _defaults = {
@@ -167,7 +170,6 @@ class ir_attachment(osv.osv):
                         if h['type'] not in ('many2one','one2many','many2many'):
                             header.append(h['field'])
                         else:
-                            print 'H: %r' % h
                             if h['ref'] in ('id', 'db_id'):
                                 header.append('%s:%s' % (h['field'], h['ref']))
                             else:
@@ -230,9 +232,13 @@ class ir_attachment(osv.osv):
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
 
-                    bck_file = time.strftime(imp_data.backup_filename)
-                    self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: backup file: %s ' % bck_file)
+                    if imp_data.backup:
+                        bck_file = time.strftime(imp_data.backup_filename)
+                        self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: backup file: %s ' % bck_file)
+                    else:
+                        self.unlink(cr, uid, ids)
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: file deleted !')
 
                     # Add trace on the log, when file was integrate
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import new file '.ljust(80, '*'))
