@@ -32,9 +32,10 @@
                 <tree string="Import list">
                     <field name="directory_id"/>
                     <field name="model_id"/>
-                    <field name="domain"/>
                     <field name="ctx"/>
                     <field name="group_id"/>
+                    <field name="backup_dir_id"/>
+                    <field name="reject_dir_id"/>
                 </tree>
 
             </field>
@@ -48,20 +49,16 @@
             <field name="arch" type="xml">
 
                 <form string="Import list">
-                    <group col="6" colspan="6">
+                    <group col="6" colspan="4">
                         <separator string="General" colspan="6"/>
                         <field name="model_id" select="1"/>
                         <field name="directory_id" select="1" domain="[('type','=','directory')]"/>
                         <field name="disable" select="2"/>
+                        <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
                     </group>
-                    <notebook>
+                    <notebook colspan="2">
                         <page string="General">
                             <group col="4" colspan="4">
-                                <group col="6" colspan="4">
-                                    <separator string="Domain/Context" colspan="6"/>
-                                    <field name="domain" colspan="6"/>
-                                    <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
-                                </group>
                                 <group col="4">
                                     <separator string="Log information" colspan="4"/>
                                     <field name="err_mail"/>
@@ -74,18 +71,33 @@
                                     <field name="csv_sep"/>
                                     <field name="csv_esc"/>
                                     <field name="encoding"/>
-                                    <separator string="Backup" colspan="4"/>
-                                    <field name="backup_dir_id" colspan="4" domain="[('type','=','directory')]"/>
-                                    <field name="filename" colspan="4"/>
-                                    <separator string="Legend to format filename" colspan="4"/>
-                                    <label align="0.0" string="%%Y for Year (eg: 2009)" colspan="2"/>
-                                    <label align="0.0" string="%%H for Hour (eg: 14)" colspan="2"/>
-                                    <label align="0.0" string="%%m for Month (eg: 09)" colspan="2"/>
-                                    <label align="0.0" string="%%M for Minutes (eg: 59)" colspan="2"/>
-                                    <label align="0.0" string="%%d for Day (eg: 01)" colspan="2"/>
-                                    <label align="0.0" string="%%S for Second (eg: 01)" colspan="2"/>
                                 </group>
                             </group>
+                            <group col="4" colspan="4">
+                                <group col="4">
+                                    <separator string="Reject" colspan="4"/>
+                                    <field name="reject_dir_id" colspan="4" domain="[('type','=','directory')]"/>
+                                    <field name="reject_filename" colspan="4"/>
+                                </group>
+                                <group col="4">
+                                    <separator string="Backup" colspan="4"/>
+                                    <field name="backup_dir_id" colspan="4" domain="[('type','=','directory')]"/>
+                                    <field name="backup_filename" colspan="4"/>
+                                </group>
+                            </group>
+                            <group col="6" colspan="4">
+                                <separator string="Legend to format filename" colspan="6"/>
+                                <label align="0.0" string="%%Y for Year (eg: 2009)" colspan="2"/>
+                                <label align="0.0" string="%%H for Hour (eg: 14)" colspan="2"/>
+                                <label align="0.0" string="%%j for day of the year (eg: 365)" colspan="2"/>
+                                <label align="0.0" string="%%m for Month (eg: 09)" colspan="2"/>
+                                <label align="0.0" string="%%M for Minutes (eg: 59)" colspan="2"/>
+                                <label align="0.0" string="%%U for Week number of the year" colspan="2"/>
+                                <label align="0.0" string="%%d for Day (eg: 01)" colspan="2"/>
+                                <label align="0.0" string="%%S for Second (eg: 01)" colspan="2"/>
+                                <label align="0.0" string="%%y for year in 2 digits" colspan="2"/>
+                            </group>
+
                         </page>
                         <page string="Columns">
 

@@ -42,9 +42,8 @@ class import_list(osv.osv):
 
     _columns = {
         'model_id': fields.many2one('ir.model','Model', required=True),
-        'domain': fields.char('Domain', size=256),
         'ctx': fields.char('Context', size=256, help='this part complete the original context'),
-        'disable': fields.boolean('Disable', help='Uncheck this, if you want to disable it'),
+        'disable': fields.boolean('Disable', help='Check this, if you want to disable it'),
         'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
         'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
         'group_id': fields.many2one('res.groups', 'Group', help='Group use for sending email'),
@@ -53,12 +52,13 @@ class import_list(osv.osv):
         'encoding': fields.selection(_encoding, 'Encoding'),
         'line_ids': fields.one2many('document.import.list.line','list_id', 'Lines'),
         'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
-        'filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'backup_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'backup_dir_id': fields.many2one('document.directory', 'Backup directory', required=True, help='Select directory where the backup file was put'),
+        'reject_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'reject_dir_id': fields.many2one('document.directory', 'Reject directory', required=True, help='Select the directory wher the reject file was put'),
     }
 
     _defaults = {
-        'domain': lambda *a: '[]',
         'ctx': lambda *a: '{}',
         'disable': lambda *a: True,
         'csv_sep': lambda *a: ';',
@@ -155,6 +155,7 @@ class ir_attachment(osv.osv):
                             'type': line.field_id.ttype,
                             'relation': line.field_id.relation,
                             'key': line.refkey,
+                            'ref': line.relation,
                         }
                         fld.append(args)
                         if line.refkey:
@@ -168,8 +169,11 @@ class ir_attachment(osv.osv):
                         if h['type'] not in ('many2one','one2many','many2many'):
                             header.append(h['field'])
                         else:
-                            #print 'C'
-                            pass
+                            print 'H: %r' % h
+                            if h['ref'] in ('id', 'db_id'):
+                                header.append('%s:%s' % (h['field'], h['ref']))
+                            else:
+                                header.append(h['field'])
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Object: %s' % imp_data.model_id.model)
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Context: %r' % context)
@@ -193,10 +197,12 @@ class ir_attachment(osv.osv):
 
                     csvfile = csv.DictReader(fp, delimiter=sep, quotechar=esc)
                     for c in csvfile:
+                        print 'C: %r' % c
                         tmpline = []
                         if uniq_key:
                             tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.','_') ,str(c[uniq_key])))
                         for f in fld:
+                            print 'F: %r' % f
                             tmpline.append(c[f['name']])
                         logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                         lines.append(tmpline)
@@ -228,7 +234,7 @@ class ir_attachment(osv.osv):
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
 
-                    bck_file = time.strftime(imp_data.filename)
+                    bck_file = time.strftime(imp_data.backup_filename)
                     self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: backup file: %s ' % bck_file)
 
