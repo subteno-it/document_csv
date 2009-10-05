@@ -56,26 +56,43 @@
                         <field name="disable" select="2"/>
                         <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
                     </group>
-                    <notebook colspan="2">
+                    <notebook colspan="4">
                         <page string="General">
-                            <group col="4" colspan="4">
-                                <group col="4">
-                                    <separator string="Log information" colspan="4"/>
-                                    <field name="err_mail"/>
-                                    <field name="err_reject"/>
-                                    <separator string="Group to send mail result" colspan="4"/>
-                                    <field name="group_id" colspan="4" select="1" nolabel="1" attrs="{'required': [('err_mail','=',True)]}"/>
-                                </group>
-                                <group col="4">
+                            <group colspan="4" col="6">
+                                <group colspan="2">
                                     <separator string="Import file information" colspan="4"/>
-                                    <field name="csv_sep"/>
-                                    <field name="csv_esc"/>
-                                    <field name="encoding"/>
+                                    <field name="csv_sep" colspan="4"/>
+                                    <field name="csv_esc" colspan="4"/>
+                                    <field name="encoding" colspan="4"/>
+                                </group>
+                                <group colspan="4">
+                                    <field name="line_ids" colspan="4" nolabel="1" height="400">
+                                        <tree string="Columns">
+                                            <field name="name"/>
+                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                                            <field name="relation"/>
+                                            <field name="refkey"/>
+                                        </tree>
+                                        <form string="Columns">
+                                            <field name="name"/>
+                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                                            <field name="relation"/>
+                                            <field name="refkey"/>
+                                        </form>
+                                    </field>
                                 </group>
                             </group>
-                            <group col="4" colspan="4">
+                        </page>
+                        <page string="Logging">
+                            <group colspan="4" col="6">
+                                    <separator string="Log information" colspan="6"/>
+                                    <field name="err_mail"/>
+                                    <field name="group_id" select="1" nolabel="1" attrs="{'required': [('err_mail','=',True)]}"/>
+                            </group>
+                            <group colspan="4" col="8">
                                 <group col="4">
                                     <separator string="Reject" colspan="4"/>
+                                    <field name="err_reject" colspan="4"/>
                                     <field name="reject_dir_id" colspan="4" domain="[('type','=','directory')]"/>
                                     <field name="reject_filename" colspan="4"/>
                                 </group>
@@ -97,25 +114,6 @@
                                 <label align="0.0" string="%%S for Second (eg: 01)" colspan="2"/>
                                 <label align="0.0" string="%%y for year in 2 digits" colspan="2"/>
                             </group>
-
-                        </page>
-                        <page string="Columns">
-
-                            <field name="line_ids" colspan="4" nolabel="1">
-                                <tree string="Columns">
-                                    <field name="name"/>
-                                    <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
-                                    <field name="relation"/>
-                                    <field name="refkey"/>
-                                </tree>
-                                <form string="Columns">
-                                    <field name="name"/>
-                                    <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
-                                    <field name="relation"/>
-                                    <field name="refkey"/>
-                                </form>
-
-                            </field>
                         </page>
                     </notebook>
                 </form>

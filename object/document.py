@@ -29,6 +29,25 @@ import netsvc
 import time
 import pooler
 
+class import_list_line(osv.osv):
+    """
+    Describe each columns from the CSV file and affect to a field in object
+    - 
+    """
+    _name='document.import.list.line'
+    _description='Document importation list line'
+
+    _columns = {
+        'list_id': fields.many2one('document.import.list', 'Line', required=True),
+        'name': fields.char('Field name', size=128, required=True),
+        'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
+        'relation': fields.selection([('id','ID'),('db_id','DB ID'),('search','Search')],'Field relation', help='Search use name_search to match the record'),
+        'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
+        'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
+    }
+
+import_list_line()
+
 _encoding = [
     ('utf-8', 'UTF 8'),
     ('cp850', 'CP 850 IBM'),
@@ -54,7 +73,7 @@ class import_list(osv.osv):
         'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
         'backup_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'backup_dir_id': fields.many2one('document.directory', 'Backup directory', required=True, help='Select directory where the backup file was put'),
-        'reject_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'reject_filename': fields.char('Reject filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'reject_dir_id': fields.many2one('document.directory', 'Reject directory', required=True, help='Select the directory wher the reject file was put'),
     }
 
@@ -85,27 +104,6 @@ class import_list(osv.osv):
         return {'warning': False}
 
 import_list()
-
-class import_list_line(osv.osv):
-    """
-    Describe each columns from the CSV file and affect to a field in object
-    - 
-    """
-    _name='document.import.list.line'
-    _description='Document importation list line'
-
-    _columns = {
-        'list_id': fields.many2one('document.import.list', 'Line', required=True),
-        'name': fields.char('Field name', size=128, required=True),
-        'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
-        'relation': fields.selection([('id','ID'),('db_id','DB ID'),('static','Static')],'Field relation'),
-        #'uniq': fields.boolean('Uniqueness', help='If check, the field relation must be unique'),
-        'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
-        #'context': fields.char('Context', size=256),
-        'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
-    }
-
-import_list_line()
 
 class ir_attachment(osv.osv):
     """Inherit this class to made the CSV treatment"""
@@ -197,12 +195,10 @@ class ir_attachment(osv.osv):
 
                     csvfile = csv.DictReader(fp, delimiter=sep, quotechar=esc)
                     for c in csvfile:
-                        print 'C: %r' % c
                         tmpline = []
                         if uniq_key:
                             tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.','_') ,str(c[uniq_key])))
                         for f in fld:
-                            print 'F: %r' % f
                             tmpline.append(c[f['name']])
                         logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                         lines.append(tmpline)
