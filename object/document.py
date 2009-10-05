@@ -44,7 +44,6 @@ class import_list(osv.osv):
         'model_id': fields.many2one('ir.model','Model', required=True),
         'domain': fields.char('Domain', size=256),
         'ctx': fields.char('Context', size=256, help='this part complete the original context'),
-        'filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
         'disable': fields.boolean('Disable', help='Uncheck this, if you want to disable it'),
         'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
         'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
@@ -54,7 +53,8 @@ class import_list(osv.osv):
         'encoding': fields.selection(_encoding, 'Encoding'),
         'line_ids': fields.one2many('document.import.list.line','list_id', 'Lines'),
         'directory_id': fields.many2one('document.directory','Directory', required=True, help='Select directory where the file was put'),
-        'backup_dir_id': fields.many2one('document.directory','Backup directory', required=True, help='Select directory where the backup file was put'),
+        'filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, use:\n%%Y for year\n%%m for month'),
+        'backup_dir_id': fields.many2one('document.directory', 'Backup directory', required=True, help='Select directory where the backup file was put'),
     }
 
     _defaults = {
@@ -98,10 +98,10 @@ class import_list_line(osv.osv):
         'list_id': fields.many2one('document.import.list', 'Line', required=True),
         'name': fields.char('Field name', size=128, required=True),
         'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
-        'relation': fields.char('Field relation', size=64, help='Specify which field is used to match this field in relation'),
-        'uniq': fields.boolean('Uniqueness', help='If check, the field relation must be unique'),
+        'relation': fields.selection([('id','ID'),('db_id','DB ID'),('static','Static')],'Field relation'),
+        #'uniq': fields.boolean('Uniqueness', help='If check, the field relation must be unique'),
         'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
-        'context': fields.char('Context', size=256),
+        #'context': fields.char('Context', size=256),
         'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
     }
 
@@ -137,7 +137,7 @@ class ir_attachment(osv.osv):
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: begin import new file '.ljust(80, '*'))
                     import csv
                     import base64
-                    from StringIO import StringIO
+                    from cStringIO import StringIO
                     imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
                     context.update(eval(imp_data.ctx))
 
@@ -183,9 +183,7 @@ class ir_attachment(osv.osv):
                     if 'datas' in vals:
                         val = base64.decodestring(vals['datas'])
 
-                    fp = StringIO()
-                    fp.write(val)
-                    fp.seek(0)
+                    fp = StringIO(val)
                     sep = chr(ord(imp_data.csv_sep[0]))
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Separator: %s ' % imp_data.csv_sep)
                     esc=None
@@ -213,8 +211,9 @@ class ir_attachment(osv.osv):
                         res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
                         if res[0] >= 0:
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
+                            cr_imp.commit()
                         else:
-                            cr_imp.close()
+                            cr_imp.rollback()
                             d = ''
                             for key,val in res[1].items():
                                 d += ('\t%s: %s\n' % (str(key),str(val)))
@@ -223,8 +222,9 @@ class ir_attachment(osv.osv):
 
                     except Exception, e:
                         cr_imp.rollback()
-                        cr_imp.close()
                         logger.notifyChannel('import', netsvc.LOG_ERROR, '%r' % e)
+                    finally:
+                        cr_imp.close()
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
 

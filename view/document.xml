@@ -16,9 +16,7 @@
                     <field name="name"/>
                     <field name="field_id"/>
                     <field name="relation"/>
-                    <field name="uniq"/>
                     <field name="refkey"/>
-                    <field name="context"/>
                 </tree>
 
             </field>
@@ -53,7 +51,7 @@
                     <group col="6" colspan="6">
                         <separator string="General" colspan="6"/>
                         <field name="model_id" select="1"/>
-                        <field name="directory_id" select="1" domain="[('parent_id','=',%(dir_root_import_source)d)]"/>
+                        <field name="directory_id" select="1" domain="[('type','=','directory')]"/>
                         <field name="disable" select="2"/>
                     </group>
                     <notebook>
@@ -77,7 +75,7 @@
                                     <field name="csv_esc"/>
                                     <field name="encoding"/>
                                     <separator string="Backup" colspan="4"/>
-                                    <field name="backup_dir_id" colspan="4"/>
+                                    <field name="backup_dir_id" colspan="4" domain="[('type','=','directory')]"/>
                                     <field name="filename" colspan="4"/>
                                     <separator string="Legend to format filename" colspan="4"/>
                                     <label align="0.0" string="%%Y for Year (eg: 2009)" colspan="2"/>
@@ -96,16 +94,12 @@
                                     <field name="name"/>
                                     <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
                                     <field name="relation"/>
-                                    <field name="uniq"/>
                                     <field name="refkey"/>
-                                    <field name="context"/>
                                 </tree>
                                 <form string="Columns">
                                     <field name="name"/>
-                                    <field name="context"/>
                                     <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
                                     <field name="relation"/>
-                                    <field name="uniq"/>
                                     <field name="refkey"/>
                                 </form>
 
