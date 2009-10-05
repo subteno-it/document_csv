@@ -215,7 +215,7 @@ class ir_attachment(osv.osv):
                     fp.close()
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: start import')
-                    # Use new cusrsor to itégrate the data
+                    # Use new cusrsor to integrate the data, because if failed the backup cannot be perform
                     cr_imp = pooler.get_db(cr.dbname).cursor()
                     try:
                         res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
