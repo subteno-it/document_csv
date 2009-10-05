@@ -201,7 +201,13 @@ class ir_attachment(osv.osv):
                         if uniq_key:
                             tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.','_') ,str(c[uniq_key])))
                         for f in fld:
-                            tmpline.append(c[f['name']])
+                            if h['type'] not in ('many2one','one2many','many2many'):
+                                if c[f['name']].find('.'):
+                                    tmpline.append(c[f['name']])
+                                else:
+                                    tmpline.append('%s_%s' % (f['relation'].replace('.','_') ,c[f['name']]))
+                            else:
+                                tmpline.append(c[f['name']])
                         logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                         lines.append(tmpline)
 
