@@ -23,7 +23,7 @@
 
 {
     'name': 'Import csv using document management',
-    'version': '1.0',
+    'version': '1.1',
     'category': 'Document',
     'description': """
     This module can import CSV file from the DMS
