@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 5.0.5-bzr\n"
+"Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-09-21 16:14:46+0000\n"
-"PO-Revision-Date: 2009-09-21 16:14:46+0000\n"
+"POT-Creation-Date: 2009-10-06 06:43:51+0000\n"
+"PO-Revision-Date: 2009-10-06 06:43:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,18 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: document_csv
-#: field:document.import.list,group_id:0
-msgid "Group"
+#: field:document.import.list,log_dir_id:0
+msgid "Log directory"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,err_reject:0
-msgid "Reject all lines if there is an error"
+#: selection:document.import.list.line,relation:0
+msgid "DB ID"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Log"
 msgstr ""
 
 #. module: document_csv
@@ -36,13 +41,23 @@ msgid "Reject all if error"
 msgstr ""
 
 #. module: document_csv
+#: field:document.import.list,reject_dir_id:0
+msgid "Reject directory"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Reject"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list.line,create:0
 msgid "Create entry"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,directory_id:0
-msgid "Select directory where the file was put"
+#: selection:document.import.list.line,relation:0
+msgid "Search"
 msgstr ""
 
 #. module: document_csv
@@ -51,14 +66,22 @@ msgid "Field relation"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.list,log_filename:0
+msgid "Indique the name of the log file, see legend at bottom"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list.line,field_id:0
 msgid "Field"
 msgstr ""
 
 #. module: document_csv
-#: model:ir.actions.act_window,name:document_csv.action_document_import_list
-#: model:ir.ui.menu,name:document_csv.menu_document_import_list
-msgid "Document import list"
+#: model:ir.module.module,description:document_csv.module_meta_information
+msgid "\n"
+"    This module can import CSV file from the DMS\n"
+"    - Put with FTP client in the directory\n"
+"    - The import start automaticaly after full transfert\n"
+"    "
 msgstr ""
 
 #. module: document_csv
@@ -78,8 +101,8 @@ msgid "%S for Second (eg: 01)"
 msgstr ""
 
 #. module: document_csv
-#: constraint:ir.model:0
-msgid "The Object name must start with x_ and not contain any special character !"
+#: field:document.import.list,group_id:0
+msgid "Group"
 msgstr ""
 
 #. module: document_csv
@@ -88,8 +111,13 @@ msgid "The log file was send to all users of the groupes"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,model_id:0
-msgid "Model"
+#: view:document.import.list:0
+msgid "General"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,log_filename:0
+msgid "Log filename"
 msgstr ""
 
 #. module: document_csv
@@ -98,13 +126,18 @@ msgid "Columns"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,filename:0
+#: field:document.import.list,backup_filename:0
 msgid "Backup filename"
 msgstr ""
 
 #. module: document_csv
 #: model:ir.module.module,shortdesc:document_csv.module_meta_information
 msgid "Import csv using document management"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,directory_id:0
+msgid "Select directory where the file was put"
 msgstr ""
 
 #. module: document_csv
@@ -123,8 +156,8 @@ msgid "Legend to format filename"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,disable:0
-msgid "Uncheck this, if you want to disable it"
+#: field:document.import.list,reject_filename:0
+msgid "Reject filename"
 msgstr ""
 
 #. module: document_csv
@@ -133,13 +166,24 @@ msgid "Field name"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list.line,relation:0
-msgid "Specify which field is used to match this field in relation"
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "Syntax error\n* %r"
+msgstr ""
+
+#. module: document_csv
+#: constraint:ir.model:0
+msgid "The Object name must start with x_ and not contain any special character !"
 msgstr ""
 
 #. module: document_csv
 #: field:document.import.list,disable:0
 msgid "Disable"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%y for year in 2 digits"
 msgstr ""
 
 #. module: document_csv
@@ -174,11 +218,17 @@ msgstr ""
 
 #. module: document_csv
 #: help:document.import.list,backup_dir_id:0
+#: help:document.import.list,log_dir_id:0
 msgid "Select directory where the backup file was put"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,context:0
+#: view:document.import.list:0
+msgid "Logging"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,ctx:0
 msgid "this part complete the original context"
 msgstr ""
 
@@ -203,20 +253,18 @@ msgid "Import file information"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Domain/Context"
+#: help:document.import.list,reject_filename:0
+msgid "Indique the name of the reject file, see legend at bottom"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,err_mail:0
-msgid "Send log by mail"
+#: help:document.import.list,err_reject:0
+msgid "Reject all lines if there is an error"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,filename:0
-msgid "Indique the name of the file to backup, use:\n"
-"%%Y for year\n"
-"%%m for month"
+#: help:document.import.list,backup:0
+msgid "If check, the original file is backup, before remove from the directory"
 msgstr ""
 
 #. module: document_csv
@@ -225,9 +273,14 @@ msgid "Separator"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,context:0
-#: field:document.import.list.line,context:0
+#: field:document.import.list,ctx:0
 msgid "Context"
+msgstr ""
+
+#. module: document_csv
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "Error"
 msgstr ""
 
 #. module: document_csv
@@ -236,8 +289,14 @@ msgid "Directory"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list.line,uniq:0
-msgid "If check, the field relation must be unique"
+#: field:document.import.list,model_id:0
+msgid "Model"
+msgstr ""
+
+#. module: document_csv
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "Bad context value"
 msgstr ""
 
 #. module: document_csv
@@ -246,18 +305,23 @@ msgid "Backup"
 msgstr ""
 
 #. module: document_csv
+#: selection:document.import.list.line,relation:0
+msgid "ID"
+msgstr ""
+
+#. module: document_csv
 #: help:document.import.list,group_id:0
 msgid "Group use for sending email"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list.line,uniq:0
-msgid "Uniqueness"
+#: field:document.import.list,err_mail:0
+msgid "Send log by mail"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,domain:0
-msgid "Domain"
+#: selection:document.import.list,encoding:0
+msgid "UTF 8"
 msgstr ""
 
 #. module: document_csv
@@ -266,8 +330,8 @@ msgid "Backup directory"
 msgstr ""
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "UTF 8"
+#: help:document.import.list,reject_dir_id:0
+msgid "Select the directory wher the reject file was put"
 msgstr ""
 
 #. module: document_csv
@@ -281,17 +345,25 @@ msgid "Encoding"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Group to send mail result"
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "The context must be start with { and ending with }\n* %r"
 msgstr ""
 
 #. module: document_csv
-#: model:ir.module.module,description:document_csv.module_meta_information
-msgid "\n"
-"    This module can import CSV file from the DMS\n"
-"    - Put with FTP client in the directory\n"
-"    - The import start automaticaly after full transfert\n"
-"    "
+#: help:document.import.list.line,relation:0
+msgid "Search use name_search to match the record"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,backup_filename:0
+msgid "Indique the name of the file to backup, see legend at bottom"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.actions.act_window,name:document_csv.action_document_import_list
+#: model:ir.ui.menu,name:document_csv.menu_document_import_list
+msgid "Document import list"
 msgstr ""
 
 #. module: document_csv
@@ -301,7 +373,7 @@ msgstr ""
 
 #. module: document_csv
 #: view:document.import.list:0
-msgid "General"
+msgid "%U for Week number of the year"
 msgstr ""
 
 #. module: document_csv
@@ -322,6 +394,21 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list,csv_esc:0
 msgid "Escape"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "%j for day of the year (eg: 365)"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,backup:0
+msgid "Store the backup"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,disable:0
+msgid "Check this, if you want to disable it"
 msgstr ""
 
 #. module: document_csv
