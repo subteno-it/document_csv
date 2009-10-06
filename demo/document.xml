@@ -10,14 +10,20 @@
         </record>
 
         <record model="document.import.list" id="demo_import_list">
+            <field name="name">Sample import</field>
+            <field name="model_id" ref="base.model_res_partner"/>
             <field name="directory_id" ref="dir_import_source_partner"/>
             <field name="csv_esc">"</field>
-            <field name="csv_sep">"</field>
+            <field name="csv_sep">;</field>
             <field name="err_reject" eval="0"/>
             <field name="err_mail" eval="1"/>
-            <field name="filename">sample-%Y-%m-%d.csv</field>
-            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="backup_filename">sample-%Y-%m-%d.csv</field>
             <field name="backup_dir_id" ref="dir_root_import_source"/>
+            <field name="backup" eval="1"/>
+            <field name="reject_filename">reject-%Y-%m-%d.csv</field>
+            <field name="reject_dir_id" ref="dir_root_import_reject"/>
+            <field name="log_filename">log-%Y-%m-%d.csv</field>
+            <field name="log_dir_id" ref="dir_root_import_log"/>
         </record>
 
         <record model="document.import.list.line" id="demo_import_list_1">

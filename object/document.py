@@ -60,6 +60,7 @@ class import_list(osv.osv):
     _description = 'Document importation list'
 
     _columns = {
+        'name': fields.char('Import name', size=128, required=True),
         'model_id': fields.many2one('ir.model','Model', required=True),
         'ctx': fields.char('Context', size=256, help='this part complete the original context'),
         'disable': fields.boolean('Disable', help='Check this, if you want to disable it'),

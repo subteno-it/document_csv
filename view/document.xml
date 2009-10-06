@@ -30,10 +30,12 @@
             <field name="arch" type="xml">
 
                 <tree string="Import list">
+                    <field name="name"/>
                     <field name="directory_id"/>
                     <field name="model_id"/>
                     <field name="ctx"/>
                     <field name="group_id"/>
+                    <field name="log_dir_id"/>
                     <field name="backup_dir_id"/>
                     <field name="reject_dir_id"/>
                 </tree>
@@ -51,10 +53,11 @@
                 <form string="Import list">
                     <group col="6" colspan="4">
                         <separator string="General" colspan="6"/>
+                        <field name="name" select="1"/>
                         <field name="model_id" select="1"/>
                         <field name="directory_id" select="1" domain="[('type','=','directory')]"/>
+                        <field name="ctx" on_change="onchange_context(ctx)" colspan="4"/>
                         <field name="disable" select="2"/>
-                        <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
                     </group>
                     <notebook colspan="4">
                         <page string="General">
@@ -84,10 +87,6 @@
                             </group>
                         </page>
                         <page string="Logging">
-                            <group colspan="4" col="6">
-                                    <separator string="Log information" colspan="6"/>
-                                    <field name="group_id" select="1" nolabel="1" attrs="{'required': [('err_mail','=',True)]}"/>
-                            </group>
                             <group colspan="4" col="12">
                                 <group col="4">
                                     <separator string="Log" colspan="4"/>
@@ -119,6 +118,12 @@
                                 <label align="0.0" string="%%d for Day (eg: 01)" colspan="2"/>
                                 <label align="0.0" string="%%S for Second (eg: 01)" colspan="2"/>
                                 <label align="0.0" string="%%y for year in 2 digits" colspan="2"/>
+                            </group>
+                        </page>
+                        <page string="Email" attrs="{'invisible': [('err_mail','!=', True)]}">
+                            <group colspan="4" col="6">
+                                    <separator string="Log information" colspan="6"/>
+                                    <field name="group_id" select="1" />
                             </group>
                         </page>
                     </notebook>
