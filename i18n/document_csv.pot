@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-10-06 07:49:39+0000\n"
-"PO-Revision-Date: 2009-10-06 07:49:39+0000\n"
+"POT-Creation-Date: 2009-10-06 09:34:41+0000\n"
+"PO-Revision-Date: 2009-10-06 09:34:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -111,8 +111,8 @@ msgid "The log file was send to all users of the groupes"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "General"
+#: help:document.import.list,mail_cc:0
+msgid "Add cc mail, separate by comma"
 msgstr ""
 
 #. module: document_csv
@@ -126,8 +126,8 @@ msgid "Columns"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,log_filename:0
-msgid "Log filename"
+#: field:document.import.list,mail_body:0
+msgid "Body"
 msgstr ""
 
 #. module: document_csv
@@ -143,6 +143,12 @@ msgstr ""
 #. module: document_csv
 #: help:document.import.list,directory_id:0
 msgid "Select directory where the file was put"
+msgstr ""
+
+#. module: document_csv
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "Syntax error\n* %r"
 msgstr ""
 
 #. module: document_csv
@@ -166,19 +172,23 @@ msgid "Reject filename"
 msgstr ""
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "Mail body"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list.line,name:0
 msgid "Field name"
 msgstr ""
 
 #. module: document_csv
-#: code:addons/document_csv/object/document.py:0
-#, python-format
-msgid "Syntax error\n* %r"
+#: selection:document.import.list,encoding:0
+msgid "Latin 9"
 msgstr ""
 
 #. module: document_csv
-#: constraint:ir.model:0
-msgid "The Object name must start with x_ and not contain any special character !"
+#: field:document.import.list,log_filename:0
+msgid "Log filename"
 msgstr ""
 
 #. module: document_csv
@@ -197,6 +207,11 @@ msgid "%d for Day (eg: 01)"
 msgstr ""
 
 #. module: document_csv
+#: constraint:ir.model:0
+msgid "The Object name must start with x_ and not contain any special character !"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list.line,list_id:0
 msgid "Line"
 msgstr ""
@@ -204,11 +219,6 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "%H for Hour (eg: 14)"
-msgstr ""
-
-#. module: document_csv
-#: field:document.import.list.line,refkey:0
-msgid "Reference Key"
 msgstr ""
 
 #. module: document_csv
@@ -243,13 +253,13 @@ msgid "this part complete the original context"
 msgstr ""
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "Latin 9"
+#: field:document.import.list,mail_cc:0
+msgid "CC"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Log information"
+#: field:document.import.list.line,refkey:0
+msgid "Reference Key"
 msgstr ""
 
 #. module: document_csv
@@ -394,6 +404,11 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "%m for Month (eg: 09)"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "General"
 msgstr ""
 
 #. module: document_csv

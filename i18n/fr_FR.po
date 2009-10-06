@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-10-06 07:49:39+0000\n"
-"PO-Revision-Date: 2009-10-06 09:50+0100\n"
+"POT-Creation-Date: 2009-10-06 09:34:41+0000\n"
+"PO-Revision-Date: 2009-10-06 11:35+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -116,9 +116,9 @@ msgid "The log file was send to all users of the groupes"
 msgstr "Le fichier de jorunal sera envoyé à tous les utilisateurs du groupes"
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "General"
-msgstr "Général"
+#: help:document.import.list,mail_cc:0
+msgid "Add cc mail, separate by comma"
+msgstr "Ajouter des mails en copie, séparé par une virgule"
 
 #. module: document_csv
 #: view:document.import.list:0
@@ -131,9 +131,9 @@ msgid "Columns"
 msgstr "Colonnes"
 
 #. module: document_csv
-#: field:document.import.list,log_filename:0
-msgid "Log filename"
-msgstr "Nom du fichier de journal"
+#: field:document.import.list,mail_body:0
+msgid "Body"
+msgstr "Corps"
 
 #. module: document_csv
 #: field:document.import.list,backup_filename:0
@@ -149,6 +149,16 @@ msgstr "Importation CSV en utilisant la gestion documentaire"
 #: help:document.import.list,directory_id:0
 msgid "Select directory where the file was put"
 msgstr "Sélectionner le répertoire dans lequel le fichier sera déposé"
+
+#. module: document_csv
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid ""
+"Syntax error\n"
+"* %r"
+msgstr ""
+"Erreur de syntaxer\n"
+"* %r"
 
 #. module: document_csv
 #: help:document.import.list.line,refkey:0
@@ -171,24 +181,24 @@ msgid "Reject filename"
 msgstr "Nom du fichier de rejet"
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "Mail body"
+msgstr "Corps du mail"
+
+#. module: document_csv
 #: field:document.import.list.line,name:0
 msgid "Field name"
 msgstr "Nom du champ"
 
 #. module: document_csv
-#: code:addons/document_csv/object/document.py:0
-#, python-format
-msgid ""
-"Syntax error\n"
-"* %r"
-msgstr ""
-"Erreur de syntaxer\n"
-"* %r"
+#: selection:document.import.list,encoding:0
+msgid "Latin 9"
+msgstr "Latin 9"
 
 #. module: document_csv
-#: constraint:ir.model:0
-msgid "The Object name must start with x_ and not contain any special character !"
-msgstr "Le nom de l'objet doit commencer avec x_ et ne pas contenir de charactères spéciaux !"
+#: field:document.import.list,log_filename:0
+msgid "Log filename"
+msgstr "Nom du fichier de journal"
 
 #. module: document_csv
 #: field:document.import.list,disable:0
@@ -206,6 +216,11 @@ msgid "%d for Day (eg: 01)"
 msgstr "%d pour les Jour (eg: 01)"
 
 #. module: document_csv
+#: constraint:ir.model:0
+msgid "The Object name must start with x_ and not contain any special character !"
+msgstr "Le nom de l'objet doit commencer avec x_ et ne pas contenir de charactères spéciaux !"
+
+#. module: document_csv
 #: field:document.import.list.line,list_id:0
 msgid "Line"
 msgstr "Ligne"
@@ -214,11 +229,6 @@ msgstr "Ligne"
 #: view:document.import.list:0
 msgid "%H for Hour (eg: 14)"
 msgstr "%H pour les Heures (eg: 14)"
-
-#. module: document_csv
-#: field:document.import.list.line,refkey:0
-msgid "Reference Key"
-msgstr "Clé de référence"
 
 #. module: document_csv
 #: selection:document.import.list,encoding:0
@@ -252,14 +262,14 @@ msgid "this part complete the original context"
 msgstr "Cette partie complète le contexte originale"
 
 #. module: document_csv
-#: selection:document.import.list,encoding:0
-msgid "Latin 9"
-msgstr "Latin 9"
+#: field:document.import.list,mail_cc:0
+msgid "CC"
+msgstr "CC"
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Log information"
-msgstr "Journal d'information"
+#: field:document.import.list.line,refkey:0
+msgid "Reference Key"
+msgstr "Clé de référence"
 
 #. module: document_csv
 #: field:document.import.list,line_ids:0
@@ -410,6 +420,11 @@ msgid "%m for Month (eg: 09)"
 msgstr "%m pour le Mois (ex: 09)"
 
 #. module: document_csv
+#: view:document.import.list:0
+msgid "General"
+msgstr "Général"
+
+#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "CP 850 IBM"
 msgstr "CP 850 IBM"
@@ -439,6 +454,8 @@ msgstr "Cocher ceci si vous souhaitez le désactivé"
 msgid "%Y for Year (eg: 2009)"
 msgstr "%Y l'année (ex: 2009)"
 
+#~ msgid "Log information"
+#~ msgstr "Journal d'information"
 #~ msgid "Uncheck this, if you want to disable it"
 #~ msgstr "Décocher ceci, si vous souhaitez le désactiver"
 
