@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-10-06 06:43:51+0000\n"
-"PO-Revision-Date: 2009-10-06 06:43:51+0000\n"
+"POT-Creation-Date: 2009-10-06 07:49:39+0000\n"
+"PO-Revision-Date: 2009-10-06 07:49:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,8 +46,8 @@ msgid "Reject directory"
 msgstr ""
 
 #. module: document_csv
-#: view:document.import.list:0
-msgid "Reject"
+#: field:document.import.list,name:0
+msgid "Import name"
 msgstr ""
 
 #. module: document_csv
@@ -116,13 +116,18 @@ msgid "General"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,log_filename:0
-msgid "Log filename"
+#: view:document.import.list:0
+msgid "Email"
 msgstr ""
 
 #. module: document_csv
 #: view:document.import.list:0
 msgid "Columns"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.list,log_filename:0
+msgid "Log filename"
 msgstr ""
 
 #. module: document_csv
@@ -225,6 +230,11 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "Logging"
+msgstr ""
+
+#. module: document_csv
+#: view:document.import.list:0
+msgid "Reject"
 msgstr ""
 
 #. module: document_csv
