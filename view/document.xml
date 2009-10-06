@@ -90,7 +90,7 @@
                             <group colspan="4" col="12">
                                 <group col="4">
                                     <separator string="Log" colspan="4"/>
-                                    <field name="err_mail"/>
+                                    <field name="err_mail" readonly="1"/>
                                     <field name="log_dir_id" colspan="4" domain="[('type','=','directory')]"/>
                                     <field name="log_filename" colspan="4"/>
                                 </group>
@@ -122,8 +122,10 @@
                         </page>
                         <page string="Email" attrs="{'invisible': [('err_mail','!=', True)]}">
                             <group colspan="4" col="6">
-                                    <separator string="Log information" colspan="6"/>
-                                    <field name="group_id" select="1" />
+                                <field name="group_id" select="1" colspan="2"/>
+                                <field name="mail_cc" colspan="4"/>
+                                <separator string="Mail body" colspan="6"/>
+                                <field name="mail_body" colspan="6" nolabel="1" height="400"/>
                             </group>
                         </page>
                     </notebook>

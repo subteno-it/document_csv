@@ -79,6 +79,8 @@ class import_list(osv.osv):
         'log_filename': fields.char('Log filename', size=128, required=True, help='Indique the name of the log file, see legend at bottom'),
         'log_dir_id': fields.many2one('document.directory', 'Log directory', required=True, help='Select directory where the backup file was put'),
         'backup': fields.boolean('Store the backup', help='If check, the original file is backup, before remove from the directory'),
+        'mail_cc': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
+        'mail_body': fields.text('Body'),
     }
 
     _defaults = {
