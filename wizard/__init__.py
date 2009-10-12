@@ -21,6 +21,19 @@
 #
 ##############################################################################
 
-import export
+
+
+load_yaml = False
+try:
+    import yaml
+    load_yaml = True
+except ImportError:
+    import netsvc
+    logger = netsvc.Logger()
+    logger.notifyChannel('init', netsvc.LOG_DEBUG, 'module document_csv: missing python yaml module')
+
+if load_yaml:
+    import yml_export
+    import yml_import
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

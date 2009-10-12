@@ -23,12 +23,16 @@
 
 {
     'name': 'Import csv using document management',
-    'version': '1.1',
+    'version': '1.2',
     'category': 'Document',
     'description': """
     This module can import CSV file from the DMS
     - Put with FTP client in the directory
     - The import start automaticaly after full transfert
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!! This module works with Python YAML Module, install it before use the import or export !!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     """,
     'author': 'Syleam',
     'depends': [

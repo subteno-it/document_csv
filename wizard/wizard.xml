@@ -28,5 +28,18 @@
             model="document.import.list"
             string="Export structure"/>
 
+        <wizard id='document_csv_import_wizard'
+            name="document_csv.import"
+            model="document.import.list"
+            string="Import structure"
+            menu="False"/>
+
+        <menuitem id="menu_document_csv_import"
+            sequence="20"
+            name="Import Structure"
+            action="document_csv_import_wizard"
+            parent="document.menu_document_configuration"
+            type="wizard"/>
+
     </data>
 </openerp>
