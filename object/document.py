@@ -213,7 +213,7 @@ class ir_attachment(osv.osv):
                                 if f['type'] in ('many2one','one2many','many2many'):
                                     if not c[f['name']].find('.') > 0:
                                         if f['ref'] == 'id':
-                                            tmpline.append('%s_%s' % (f['relation'].replace('.','_') ,c[f['name']]))
+                                            fld_name = '%s_%s' % (f['relation'].replace('.','_') ,c[f['name']])
                                 tmpline.append(fld_name)
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                             lines.append(tmpline)
