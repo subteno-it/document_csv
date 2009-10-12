@@ -39,7 +39,7 @@
         'security/ir.model.access.csv',
         #'data/sequence.xml',
         #'view/menu.xml',
-        #'wizard/wizard.xml',
+        'wizard/wizard.xml',
         #'report/report.xml',
         'data/directory.xml',
         'view/document.xml',
