@@ -29,25 +29,6 @@ import netsvc
 import time
 import pooler
 
-class import_list_line(osv.osv):
-    """
-    Describe each columns from the CSV file and affect to a field in object
-    - 
-    """
-    _name='document.import.list.line'
-    _description='Document importation list line'
-
-    _columns = {
-        'list_id': fields.many2one('document.import.list', 'Line', required=True),
-        'name': fields.char('Field name', size=128, required=True),
-        'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
-        'relation': fields.selection([('id','ID'),('db_id','DB ID'),('search','Search')],'Field relation', help='Search use name_search to match the record'),
-        'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
-        'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
-    }
-
-import_list_line()
-
 _encoding = [
     ('utf-8', 'UTF 8'),
     ('cp850', 'CP 850 IBM'),
@@ -110,6 +91,25 @@ class import_list(osv.osv):
         return {'warning': False}
 
 import_list()
+
+class import_list_line(osv.osv):
+    """
+    Describe each columns from the CSV file and affect to a field in object
+    - 
+    """
+    _name='document.import.list.line'
+    _description='Document importation list line'
+
+    _columns = {
+        'list_id': fields.many2one('document.import.list', 'Line', required=True),
+        'name': fields.char('Field name', size=128, required=True),
+        'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
+        'relation': fields.selection([('id','ID'),('db_id','DB ID'),('search','Search')],'Field relation', help='Search use name_search to match the record'),
+        'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
+        'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
+    }
+
+import_list_line()
 
 class ir_attachment(osv.osv):
     """Inherit this class to made the CSV treatment"""
