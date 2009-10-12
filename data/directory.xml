@@ -32,6 +32,30 @@
             <field name="parent_id" ref="dir_root_import"/>
         </record>
 
+        <record model="document.directory" id="dir_root_import_backup">
+            <field name="name">Backup</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="ressource_id">0</field>
+            <field name="parent_id" ref="dir_root_import"/>
+        </record>
+
+        <function
+            eval="('default',False,'log_dir_id', [('document.import.list',False)], ref('dir_root_import_log'), True, False, False, False, True)"
+            id="dir_log_set"
+            model="ir.values"
+            name="set"/>
+
+        <function
+            eval="('default',False,'backup_dir_id', [('document.import.list',False)], ref('dir_root_import_backup'), True, False, False, False, True)"
+            id="dir_log_set"
+            model="ir.values"
+            name="set"/>
+
+        <function
+            eval="('default',False,'reject_dir_id', [('document.import.list',False)], ref('dir_root_import_reject'), True, False, False, False, True)"
+            id="dir_log_set"
+            model="ir.values"
+            name="set"/>
 
     </data>
 </openerp>
