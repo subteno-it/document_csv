@@ -21,19 +21,50 @@
 #
 ##############################################################################
 
+import wizard
+import pooler
+from cStringIO import StringIO
+import base64
+import yaml
 
+init_form = """<?xml version="1.0" ?>
+<form string="Import CSV structure">
+  <separator string="Select file to import" colspan="4"/>
+  <field name="filename" colspan="4" width="300"/>
+</form>
+"""
 
-load_yaml = False
-try:
-    import yaml
-    load_yaml = True
-except ImportError:
-    import netsvc
-    logger = netsvc.Logger()
-    logger.notifyChannel('init', netsvc.LOG_DEBUG, 'module document_csv: missing python yaml module')
+init_fields = {
+    'filename': {'string':'Select File', 'type':'binary','required':True,'filters':'*.yml'},
+}
 
-if load_yaml:
-    import export_yml
-    import import_yml
+def _import(self, cr, uid, data, context):
+    if not context: context = {}
+    print 'DATA: %r' % data
+
+    return {}
+
+class import_yaml(wizard.interface):
+
+    states = {
+        'init' : {
+            'actions': [],
+            'result': {
+                'type': 'form',
+                'arch': init_form,
+                'fields': init_fields,
+                'state': [('end','Cancel','gtk-cancel'), ('valid', 'OK', 'gtk-ok', True)],
+            }
+        },
+        'valid': {
+            'actions': [_import],
+            'result': {
+                'type': 'state',
+                'state': 'end'
+            }
+        }
+    }
+
+import_yaml('document_csv.import')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
