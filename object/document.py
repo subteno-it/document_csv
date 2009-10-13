@@ -39,6 +39,7 @@ _encoding = [
 class import_list(osv.osv):
     _name='document.import.list'
     _description = 'Document importation list'
+    _order = 'disable'
 
     _columns = {
         'name': fields.char('Import name', size=128, required=True),
