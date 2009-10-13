@@ -29,7 +29,7 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
 
-                <tree string="Import list">
+                <tree string="Import list" colors="#f66a00:disable==True">
                     <field name="name"/>
                     <field name="directory_id"/>
                     <field name="model_id"/>
@@ -38,6 +38,7 @@
                     <field name="log_dir_id"/>
                     <field name="backup_dir_id"/>
                     <field name="reject_dir_id"/>
+                    <field name="disable"/>
                 </tree>
 
             </field>
