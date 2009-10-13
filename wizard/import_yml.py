@@ -40,9 +40,61 @@ init_fields = {
 
 def _import(self, cr, uid, data, context):
     if not context: context = {}
-    print 'DATA: %r' % data
+    pool = pooler.get_pool(cr.dbname)
+    model_obj = pool.get('ir.model')
+    fld_obj = pool.get('ir.model.fields')
+    dir_obj = pool.get('document.directory')
+    imp_obj = pool.get('document.import.list')
+
+    content = base64.decodestring(data['form']['filename'])
+    st = yaml.load(content)
+
+    # Search the model_id
+    mod_ids = model_obj.search(cr, uid, [('model','=', st['object'])])
+    if not mod_ids:
+        raise wizard.except_wizard(_('Error'), _('No model name %s found') % st['object'])
+    mod_id = mod_ids[0]
+
+    # Search the directory
+    dir_ids = dir_obj.search(cr, uid, [('name','=',st['directory'])])
+    if not dir_ids:
+        raise wizard.except_wizard(_('Error'), _('No directory with the name %s found') % st['name'])
+    dir_id = dir_ids[0]
+
+    imp = {
+        'name': st['name'],
+        'ctx': st['context'],
+        'model_id': mod_id,
+        'directory_id': dir_id,
+        'csv_sep': st.get('separator', ';'),
+        'csv_esc': st.get('escape', '"'),
+        'encoding': st.get('encoding', 'utf-8'),
+    }
+
+    lines_ids = []
+    for i in st['lines']:
+        # The field id associate to the name
+        fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id),('name', '=', i['field'])])
+        if not fld_ids:
+            raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['field'])
+        fld_id = fld_ids[0]
+
+        l = {
+            'name': i['name'],
+            'field_id': fld_id,
+            'relation': i.get('relation', False),
+            'refkey': i.get('refkey', False),
+        }
+
+        lines_ids.append((0, 0, l))
+    imp['line_ids'] = lines_ids
+
+    imp_id = imp_obj.create(cr, uid, imp, context=context)
+    if not imp_id:
+        raise wizard.except_wizard(_('Error'), _('Failed to create the list entry'))
 
     return {}
+
 
 class import_yaml(wizard.interface):
 
