@@ -28,7 +28,7 @@ import base64
 import yaml
 
 init_form = """<?xml version="1.0" ?>
-<form string="My Form">
+<form string="Export structure">
   <separator string="The export file is available, save it to a local drive" colspan="4"/>
   <field name="name" invisible="1"/>
   <field name="filename" colspan="4" width="350" filename="name"/>

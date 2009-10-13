@@ -30,7 +30,7 @@ import yaml
 init_form = """<?xml version="1.0" ?>
 <form string="Import CSV structure">
   <separator string="Select file to import" colspan="4"/>
-  <field name="filename" colspan="4" width="300"/>
+  <field name="filename" colspan="4" width="350"/>
 </form>
 """
 
@@ -52,7 +52,8 @@ def _import(self, cr, uid, data, context):
     # Search the model_id
     mod_ids = model_obj.search(cr, uid, [('model','=', st['object'])])
     if not mod_ids:
-        raise wizard.except_wizard(_('Error'), _('No model name %s found') % st['object'])
+        raise wizard.except_wizard(_('Error'), 
+                                   _('No model name %s found') % st['object'])
     mod_id = mod_ids[0]
 
     # Search the directory
