@@ -38,7 +38,7 @@
             sequence="20"
             name="Import Structure"
             action="document_csv_import_wizard"
-            parent="document.menu_document_configuration"
+            parent="menu_document_import_configuration"
             type="wizard"/>
 
     </data>
