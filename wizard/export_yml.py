@@ -66,7 +66,7 @@ def _init(self, cr, uid, data, context):
     content['lines'] = lines
     buf = StringIO()
     print yaml.dump(content, default_flow_style=False)
-    buf.write(yaml.dump(content, default_flow_style=False))
+    buf.write(yaml.dump(content, encoding='utf-8', default_flow_style=False))
     out = base64.encodestring(buf.getvalue())
     buf.close()
     return {'filename': out, 'name': yml_file}
