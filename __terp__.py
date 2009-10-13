@@ -42,7 +42,7 @@
         #'security/groups.xml',
         'security/ir.model.access.csv',
         #'data/sequence.xml',
-        #'view/menu.xml',
+        'view/menu.xml',
         'wizard/wizard.xml',
         #'report/report.xml',
         'data/directory.xml',

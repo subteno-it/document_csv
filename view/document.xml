@@ -159,7 +159,7 @@
         </record>
 
         <menuitem action="action_document_import_list" id="menu_document_import_list"
-            parent="document.menu_document_configuration" sequence="30"/>
+            parent="menu_document_import_configuration" sequence="10"/>
 
 
     </data>
