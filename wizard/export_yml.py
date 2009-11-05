@@ -25,7 +25,7 @@ import wizard
 import pooler
 from cStringIO import StringIO
 import base64
-import yaml
+from tools.translate import _
 
 init_form = """<?xml version="1.0" ?>
 <form string="Export structure">
@@ -42,6 +42,10 @@ init_fields = {
 
 def _init(self, cr, uid, data, context):
     if not context: context = {}
+    try:
+        import yaml
+    except ImportError:
+        raise wizard.except_wizard(_('Error'),_('Python Yaml Module not found, see description module'))
     pool = pooler.get_pool(cr.dbname)
     doc_obj = pool.get('document.import.list')
     doc = doc_obj.browse(cr, uid, data['id'], context=context)

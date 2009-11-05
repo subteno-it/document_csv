@@ -25,7 +25,7 @@ import wizard
 import pooler
 from cStringIO import StringIO
 import base64
-import yaml
+from tools.translate import _
 
 init_form = """<?xml version="1.0" ?>
 <form string="Import CSV structure">
@@ -37,6 +37,14 @@ init_form = """<?xml version="1.0" ?>
 init_fields = {
     'filename': {'string':'Select File', 'type':'binary','required':True,'filters':'*.yml'},
 }
+
+def _check_yaml(self, cr, uid, data, context):
+    try:
+        import yaml
+    except ImportError:
+        raise wizard.except_wizard(_('Error'),_('Python Yaml Module not found, see description module'))
+    return {}
+
 
 def _import(self, cr, uid, data, context):
     if not context: context = {}
@@ -101,7 +109,7 @@ class import_yaml(wizard.interface):
 
     states = {
         'init' : {
-            'actions': [],
+            'actions': [_check_yaml],
             'result': {
                 'type': 'form',
                 'arch': init_form,

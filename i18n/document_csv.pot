@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-10-13 14:14:45+0000\n"
-"PO-Revision-Date: 2009-10-13 14:14:45+0000\n"
+"POT-Creation-Date: 2009-11-05 11:32:27+0000\n"
+"PO-Revision-Date: 2009-11-05 11:32:27+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,17 +33,31 @@ msgid "Syntax error\n* %r"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,log_filename:0
-msgid "Indique the name of the log file, see legend at bottom"
+#: selection:document.import.format,type:0
+#: field:document.import.list,format_time:0
+msgid "Time"
 msgstr ""
 
 #. module: document_csv
-#: model:ir.module.module,description:document_csv.module_meta_information
-msgid "\n"
-"    This module can import CSV file from the DMS\n"
-"    - Put with FTP client in the directory\n"
-"    - The import start automaticaly after full transfert\n"
-"    "
+#: selection:document.import.format,type:0
+msgid "Interger"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.actions.act_window,name:document_csv.action_document_import_format
+#: model:ir.ui.menu,name:document_csv.menu_document_import_format
+msgid "Import format"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.format,type:0
+msgid "DateTime"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.actions.act_window,name:document_csv.action_document_import_list
+#: model:ir.ui.menu,name:document_csv.menu_document_import_list
+msgid "Document import list"
 msgstr ""
 
 #. module: document_csv
@@ -92,6 +106,11 @@ msgid "Select directory where the file was put"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.format,name:0
+msgid "This field content depend to the type, see legend"
+msgstr ""
+
+#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "Latin 9"
 msgstr ""
@@ -108,6 +127,13 @@ msgid "File name"
 msgstr ""
 
 #. module: document_csv
+#: code:addons/document_csv/wizard/export_yml.py:0
+#: code:addons/document_csv/wizard/import_yml.py:0
+#, python-format
+msgid "Python Yaml Module not found"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list,err_mail:0
 msgid "Send log by mail"
 msgstr ""
@@ -115,6 +141,11 @@ msgstr ""
 #. module: document_csv
 #: field:document.import.list,name:0
 msgid "Import name"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,log_filename:0
+msgid "Indique the name of the log file, see legend at bottom"
 msgstr ""
 
 #. module: document_csv
@@ -154,19 +185,23 @@ msgid "Search use name_search to match the record"
 msgstr ""
 
 #. module: document_csv
-#: model:ir.actions.act_window,name:document_csv.action_document_import_list
-#: model:ir.ui.menu,name:document_csv.menu_document_import_list
-msgid "Document import list"
-msgstr ""
-
-#. module: document_csv
 #: view:document.import.list:0
 msgid "%m for Month (eg: 09)"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.list,format_date:0
+msgid "Select the date format on the csv file"
+msgstr ""
+
+#. module: document_csv
 #: constraint:document.directory:0
 msgid "Error! You can not create recursive Directories."
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,format_time:0
+msgid "Select the time format on the csv file"
 msgstr ""
 
 #. module: document_csv
@@ -187,6 +222,11 @@ msgstr ""
 #. module: document_csv
 #: help:document.import.list,mail_cc:0
 msgid "Add cc mail, separate by comma"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.format,type:0
+msgid "Type"
 msgstr ""
 
 #. module: document_csv
@@ -272,6 +312,11 @@ msgid "Directory"
 msgstr ""
 
 #. module: document_csv
+#: view:document.import.format:0
+msgid "Format list"
+msgstr ""
+
+#. module: document_csv
 #: selection:document.import.list,encoding:0
 msgid "UTF 8"
 msgstr ""
@@ -282,6 +327,7 @@ msgid "Indique the name of the file to backup, see legend at bottom"
 msgstr ""
 
 #. module: document_csv
+#: view:document.import.format:0
 #: view:document.import.list:0
 #: view:document.import.list.line:0
 msgid "Import list"
@@ -343,8 +389,8 @@ msgid "Backup filename"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,reject_filename:0
-msgid "Indique the name of the reject file, see legend at bottom"
+#: field:document.import.list,reject_filename:0
+msgid "Reject filename"
 msgstr ""
 
 #. module: document_csv
@@ -357,6 +403,12 @@ msgstr ""
 #: code:addons/document_csv/wizard/import_yml.py:0
 #, python-format
 msgid "No model name %s found"
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.format,type:0
+#: field:document.import.list,format_date:0
+msgid "Date"
 msgstr ""
 
 #. module: document_csv
@@ -376,6 +428,7 @@ msgstr ""
 
 #. module: document_csv
 #: code:addons/document_csv/object/document.py:0
+#: code:addons/document_csv/wizard/export_yml.py:0
 #: code:addons/document_csv/wizard/import_yml.py:0
 #, python-format
 msgid "Error"
@@ -413,8 +466,19 @@ msgid "Document importation list line"
 msgstr ""
 
 #. module: document_csv
+#: code:addons/document_csv/object/document.py:0
+#, python-format
+msgid "The context must be start with { and ending with }\n* %r"
+msgstr ""
+
+#. module: document_csv
 #: view:document.import.list:0
 msgid "%j for day of the year (eg: 365)"
+msgstr ""
+
+#. module: document_csv
+#: model:ir.model,name:document_csv.model_document_import_format
+msgid "Define date and number format"
 msgstr ""
 
 #. module: document_csv
@@ -446,6 +510,12 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "%S for Second (eg: 01)"
+msgstr ""
+
+#. module: document_csv
+#: field:document.import.format,name:0
+#: view:document.import.list:0
+msgid "Format"
 msgstr ""
 
 #. module: document_csv
@@ -494,13 +564,18 @@ msgid "Context"
 msgstr ""
 
 #. module: document_csv
+#: help:document.import.format,type:0
+msgid "Select the type of the format"
+msgstr ""
+
+#. module: document_csv
 #: field:document.import.list,model_id:0
 msgid "Model"
 msgstr ""
 
 #. module: document_csv
-#: field:document.import.list,reject_filename:0
-msgid "Reject filename"
+#: help:document.import.list,reject_filename:0
+msgid "Indique the name of the reject file, see legend at bottom"
 msgstr ""
 
 #. module: document_csv
@@ -514,9 +589,21 @@ msgid "The export file is available, save it to a local drive"
 msgstr ""
 
 #. module: document_csv
-#: code:addons/document_csv/object/document.py:0
-#, python-format
-msgid "The context must be start with { and ending with }\n* %r"
+#: model:ir.module.module,description:document_csv.module_meta_information
+msgid "\n"
+"    This module can import CSV file from the DMS\n"
+"    - Put with FTP client in the directory\n"
+"    - The import start automaticaly after full transfert\n"
+"\n"
+"    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+"    !!! This module works with Python YAML Module, install it before use the import or export !!!\n"
+"    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+"    "
+msgstr ""
+
+#. module: document_csv
+#: selection:document.import.format,type:0
+msgid "Float"
 msgstr ""
 
 #. module: document_csv
