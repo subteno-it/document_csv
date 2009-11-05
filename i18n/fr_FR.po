@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-11-05 11:32:27+0000\n"
-"PO-Revision-Date: 2009-11-05 14:23+0100\n"
+"POT-Creation-Date: 2009-11-05 14:36:59+0000\n"
+"PO-Revision-Date: 2009-11-05 15:40+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -128,13 +128,6 @@ msgstr "Exporter la structure"
 #: wizard_field:document_csv.export,init,name:0
 msgid "File name"
 msgstr "Nom de fichier"
-
-#. module: document_csv
-#: code:addons/document_csv/wizard/export_yml.py:0
-#: code:addons/document_csv/wizard/import_yml.py:0
-#, python-format
-msgid "Python Yaml Module not found"
-msgstr "Module Python YAML non trouvé !"
 
 #. module: document_csv
 #: field:document.import.list,err_mail:0
@@ -287,6 +280,13 @@ msgstr "Choisissez un répertoire de destination pour archiver le fichier"
 #: view:document.import.list:0
 msgid "Logging"
 msgstr "Journalisation"
+
+#. module: document_csv
+#: code:addons/document_csv/wizard/export_yml.py:0
+#: code:addons/document_csv/wizard/import_yml.py:0
+#, python-format
+msgid "Python Yaml Module not found, see description module"
+msgstr "Module python YAML non trouvé, voir la description du module"
 
 #. module: document_csv
 #: wizard_button:document_csv.export,init,end:0
@@ -608,6 +608,14 @@ msgid ""
 "    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
 "    "
 msgstr ""
+"\n"
+"    Ce module peut importer un fichier CSV depuis la gestion documentaire\n"
+"    - Déposer avec un client FTP dans le dossier voulu\n"
+"    - L'import démarrera aussitôt le transfert terminé\n"
+"\n"
+"    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+"    !!! Ce module fonctionner avec le module Python YAML, Installer le avant d'utiliser les import/export !!!\n"
+"    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
 
 #. module: document_csv
 #: selection:document.import.format,type:0
@@ -624,6 +632,9 @@ msgstr "Liste des importations"
 msgid "Store the backup"
 msgstr "Archiver le fichier"
 
+#, python-format
+#~ msgid "Python Yaml Module not found"
+#~ msgstr "Module Python YAML non trouvé !"
 #~ msgid "\n"
 #~ "    This module can import CSV file from the DMS\n"
 #~ "    - Put with FTP client in the directory\n"
@@ -635,8 +646,4 @@ msgstr "Archiver le fichier"
 #~ "    - Déposé les fichiers avec un client FTP.\n"
 #~ "    - L'import démarrera automatiquement après le transfert complet\n"
 #~ "    "
-#~ msgid "My Form"
-#~ msgstr "Mon formulaire"
-#~ msgid "Log information"
-#~ msgstr "Journal d'information"
 

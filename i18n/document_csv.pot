@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-11-05 11:32:27+0000\n"
-"PO-Revision-Date: 2009-11-05 11:32:27+0000\n"
+"POT-Creation-Date: 2009-11-05 14:36:59+0000\n"
+"PO-Revision-Date: 2009-11-05 14:36:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -124,13 +124,6 @@ msgstr ""
 #. module: document_csv
 #: wizard_field:document_csv.export,init,name:0
 msgid "File name"
-msgstr ""
-
-#. module: document_csv
-#: code:addons/document_csv/wizard/export_yml.py:0
-#: code:addons/document_csv/wizard/import_yml.py:0
-#, python-format
-msgid "Python Yaml Module not found"
 msgstr ""
 
 #. module: document_csv
@@ -283,6 +276,13 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "Logging"
+msgstr ""
+
+#. module: document_csv
+#: code:addons/document_csv/wizard/export_yml.py:0
+#: code:addons/document_csv/wizard/import_yml.py:0
+#, python-format
+msgid "Python Yaml Module not found, see description module"
 msgstr ""
 
 #. module: document_csv
