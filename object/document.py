@@ -29,6 +29,31 @@ import netsvc
 import time
 import pooler
 
+
+class import_format(osv.osv):
+    _name = 'document.import.format'
+    _description = 'Define date and number format'
+
+    help_name = """This field content depend to the type, see legend"""
+
+    type_list = [
+        ('date', 'Date'),
+        ('time', 'Time'),
+        ('datetime', 'DateTime'),
+        ('int', 'Interger'),
+        ('float', 'Float'),
+    ]
+
+    _columns = {
+        'name': fields.char('Format', size=64, required=True, help=help_name),
+        'type': fields.selection(type_list, 'Type', help='Select the type of the format'),
+    }
+    _defaults = {
+        'type': lambda *a: 'date',
+    }
+
+import_format()
+
 _encoding = [
     ('utf-8', 'UTF 8'),
     ('cp850', 'CP 850 IBM'),
@@ -40,6 +65,24 @@ class import_list(osv.osv):
     _name='document.import.list'
     _description = 'Document importation list'
     _order = 'disable'
+
+    def _get_format_date(self, cr, uid, context=None):
+        if not context: context = {}
+        fmt_obj = self.pool.get('document.import.format')
+        ids = fmt_obj.search(cr, uid, [('type','=','date')])
+        res = [('','')]
+        for t in fmt_obj.browse(cr, uid, ids, context=context):
+            res.append((t.id, t.name))
+        return res
+
+    def _get_format_time(self, cr, uid, context=None):
+        if not context: context = {}
+        fmt_obj = self.pool.get('document.import.format')
+        ids = fmt_obj.search(cr, uid, [('type','=','time')])
+        res = [('','')]
+        for t in fmt_obj.browse(cr, uid, ids, context=context):
+            res.append((t.id, t.name))
+        return res
 
     _columns = {
         'name': fields.char('Import name', size=128, required=True),
@@ -63,6 +106,8 @@ class import_list(osv.osv):
         'backup': fields.boolean('Store the backup', help='If check, the original file is backup, before remove from the directory'),
         'mail_cc': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
         'mail_body': fields.text('Body'),
+        'format_date': fields.selection(_get_format_date, 'Date', help='Select the date format on the csv file'),
+        'format_time': fields.selection(_get_format_time, 'Time', help='Select the time format on the csv file'),
     }
 
     _defaults = {
