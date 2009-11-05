@@ -69,7 +69,7 @@ def _init(self, cr, uid, data, context):
         lines.append(line)
     content['lines'] = lines
     buf = StringIO()
-    print yaml.dump(content, default_flow_style=False)
+    #print yaml.dump(content, default_flow_style=False)
     buf.write(yaml.dump(content, encoding='utf-8', default_flow_style=False))
     out = base64.encodestring(buf.getvalue())
     buf.close()
