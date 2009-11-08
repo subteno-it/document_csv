@@ -40,8 +40,6 @@ class import_format(osv.osv):
         ('date', 'Date'),
         ('time', 'Time'),
         ('datetime', 'DateTime'),
-        ('int', 'Interger'),
-        ('float', 'Float'),
     ]
 
     _columns = {
@@ -86,14 +84,6 @@ class import_list(osv.osv):
         if not context: context = {}
         return self._get_format(cr, uid, 'datetime', context)
 
-    def _get_format_integer(self, cr, uid, context=None):
-        if not context: context = {}
-        return self._get_format(cr, uid, 'int', context)
-
-    def _get_format_float(self, cr, uid, context=None):
-        if not context: context = {}
-        return self._get_format(cr, uid, 'float', context)
-
     _columns = {
         'name': fields.char('Import name', size=128, required=True),
         'model_id': fields.many2one('ir.model','Model', required=True),
@@ -119,8 +109,6 @@ class import_list(osv.osv):
         'format_date': fields.many2one('document.import.format', 'Date', domain="[('type','=','date')]", help='Select the date format on the csv file'),
         'format_time': fields.many2one('document.import.format', 'Time', domain="[('type','=','time')]", help='Select the time format on the csv file'),
         'format_datetime': fields.many2one('document.import.format', 'DateTime', domain="[('type','=','datetime')]", help='Select the datetime format on the csv file'),
-        'format_integer': fields.many2one('document.import.format', 'Integer', domain="[('type','=','int')]", help='Select the integer format on the csv file'),
-        'format_float': fields.many2one('document.import.format', 'Float', domain="[('type','=','float')]", help='Select the float format on the csv file'),
     }
 
     _defaults = {

@@ -132,8 +132,6 @@
                                     <field name="format_date" colspan="4"/>
                                     <field name="format_time" colspan="4"/>
                                     <field name="format_datetime" colspan="4"/>
-                                    <field name="format_integer" colspan="4"/>
-                                    <field name="format_float" colspan="4"/>
                                 </group>
                                 <group colspan="4">
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
