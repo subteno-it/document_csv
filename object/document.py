@@ -66,23 +66,33 @@ class import_list(osv.osv):
     _description = 'Document importation list'
     _order = 'disable'
 
-    def _get_format_date(self, cr, uid, context=None):
-        if not context: context = {}
+    def _get_format(self, cr, uid, name, context=None):
         fmt_obj = self.pool.get('document.import.format')
-        ids = fmt_obj.search(cr, uid, [('type','=','date')])
+        ids = fmt_obj.search(cr, uid, [('type','=', name)])
         res = [('','')]
         for t in fmt_obj.browse(cr, uid, ids, context=context):
             res.append((t.id, t.name))
         return res
 
+    def _get_format_date(self, cr, uid, context=None):
+        if not context: context = {}
+        return self._get_format(cr, uid, 'date', context)
+
     def _get_format_time(self, cr, uid, context=None):
         if not context: context = {}
-        fmt_obj = self.pool.get('document.import.format')
-        ids = fmt_obj.search(cr, uid, [('type','=','time')])
-        res = [('','')]
-        for t in fmt_obj.browse(cr, uid, ids, context=context):
-            res.append((t.id, t.name))
-        return res
+        return self._get_format(cr, uid, 'time', context)
+
+    def _get_format_datetime(self, cr, uid, context=None):
+        if not context: context = {}
+        return self._get_format(cr, uid, 'datetime', context)
+
+    def _get_format_integer(self, cr, uid, context=None):
+        if not context: context = {}
+        return self._get_format(cr, uid, 'int', context)
+
+    def _get_format_float(self, cr, uid, context=None):
+        if not context: context = {}
+        return self._get_format(cr, uid, 'float', context)
 
     _columns = {
         'name': fields.char('Import name', size=128, required=True),
@@ -106,8 +116,11 @@ class import_list(osv.osv):
         'backup': fields.boolean('Store the backup', help='If check, the original file is backup, before remove from the directory'),
         'mail_cc': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
         'mail_body': fields.text('Body'),
-        'format_date': fields.selection(_get_format_date, 'Date', help='Select the date format on the csv file'),
-        'format_time': fields.selection(_get_format_time, 'Time', help='Select the time format on the csv file'),
+        'format_date': fields.many2one('document.import.format', 'Date', domain="[('type','=','date')]", help='Select the date format on the csv file'),
+        'format_time': fields.many2one('document.import.format', 'Time', domain="[('type','=','time')]", help='Select the time format on the csv file'),
+        'format_datetime': fields.many2one('document.import.format', 'DateTime', domain="[('type','=','datetime')]", help='Select the datetime format on the csv file'),
+        'format_integer': fields.many2one('document.import.format', 'Integer', domain="[('type','=','int')]", help='Select the integer format on the csv file'),
+        'format_float': fields.many2one('document.import.format', 'Float', domain="[('type','=','float')]", help='Select the float format on the csv file'),
     }
 
     _defaults = {
