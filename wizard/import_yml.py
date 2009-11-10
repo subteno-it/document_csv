@@ -48,6 +48,7 @@ def _check_yaml(self, cr, uid, data, context):
 
 def _import(self, cr, uid, data, context):
     if not context: context = {}
+    import yaml
     pool = pooler.get_pool(cr.dbname)
     model_obj = pool.get('ir.model')
     fld_obj = pool.get('ir.model.fields')
@@ -67,7 +68,7 @@ def _import(self, cr, uid, data, context):
     # Search the directory
     dir_ids = dir_obj.search(cr, uid, [('name','=',st['directory'])])
     if not dir_ids:
-        raise wizard.except_wizard(_('Error'), _('No directory with the name %s found') % st['name'])
+        raise wizard.except_wizard(_('Error'), _('No directory with the name %s found') % st['directory'])
     dir_id = dir_ids[0]
 
     imp = {
