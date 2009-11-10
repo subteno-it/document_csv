@@ -94,7 +94,6 @@
                     <field name="directory_id"/>
                     <field name="model_id"/>
                     <field name="ctx"/>
-                    <field name="group_id"/>
                     <field name="log_dir_id"/>
                     <field name="backup_dir_id"/>
                     <field name="reject_dir_id"/>
@@ -155,7 +154,7 @@
                             <group colspan="4" col="12">
                                 <group col="4">
                                     <separator string="Log" colspan="4"/>
-                                    <field name="err_mail" readonly="1"/>
+                                    <field name="err_mail" />
                                     <field name="log_dir_id" colspan="4" domain="[('type','=','directory')]"/>
                                     <field name="log_filename" colspan="4"/>
                                 </group>
@@ -186,11 +185,27 @@
                             </group>
                         </page>
                         <page string="Email" attrs="{'invisible': [('err_mail','!=', True)]}">
-                            <group colspan="4" col="6">
-                                <field name="group_id" select="1" colspan="2"/>
-                                <field name="mail_cc" colspan="4"/>
-                                <separator string="Mail body" colspan="6"/>
-                                <field name="mail_body" colspan="6" nolabel="1" height="400"/>
+                            <group colspan="4" col="12">
+                                <separator string="From" colspan="4"/>
+                                <field name="mail_from" colspan="12" nolabel="1"/>
+                                <group colspan="6" col="4">
+                                    <separator string="To" colspan="4"/>
+                                    <field name="mail_cc" colspan="4" nolabel="1"/>
+                                    <separator string="Subject" colspan="4"/>
+                                    <field name="mail_subject" colspan="4" nolabel="1"/>
+                                    <separator string="Mail body" colspan="4"/>
+                                    <field name="mail_body" colspan="4" nolabel="1" height="400"/>
+                                </group>
+                                <group colspan="6" col="4">
+                                    <separator string="To" colspan="4"/>
+                                    <field name="mail_cc_err" colspan="4" nolabel="1"/>
+                                    <separator string="Subject" colspan="4"/>
+                                    <field name="mail_subject_err" colspan="4" nolabel="1"/>
+                                    <separator string="Mail body" colspan="4"/>
+                                    <field name="mail_body_err" colspan="4" nolabel="1" height="400"/>
+                                </group>
+                                <separator string="Legend to format mail" colspan="12"/>
+                                <label align="0.0" string="%%(count)s: Number of imported lines" colspan="4"/>
                             </group>
                         </page>
                     </notebook>

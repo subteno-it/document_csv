@@ -25,6 +25,8 @@ from osv import osv
 from osv import fields
 from tools.translate import _
 from tools import ustr
+from tools import email_send as email
+from tools import config
 import netsvc
 import time
 import pooler
@@ -91,7 +93,6 @@ class import_list(osv.osv):
         'disable': fields.boolean('Disable', help='Check this, if you want to disable it'),
         'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
         'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
-        'group_id': fields.many2one('res.groups', 'Group', help='Group use for sending email'),
         'csv_sep': fields.char('Separator', size=1, required=True),
         'csv_esc': fields.char('Escape', size=1),
         'encoding': fields.selection(_encoding, 'Encoding'),
@@ -104,8 +105,13 @@ class import_list(osv.osv):
         'log_filename': fields.char('Log filename', size=128, required=True, help='Indique the name of the log file, see legend at bottom'),
         'log_dir_id': fields.many2one('document.directory', 'Log directory', required=True, help='Select directory where the backup file was put'),
         'backup': fields.boolean('Store the backup', help='If check, the original file is backup, before remove from the directory'),
+        'mail_from': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
         'mail_cc': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
+        'mail_subject': fields.char('Subject', size=128, help='You can used format to the subject'),
         'mail_body': fields.text('Body'),
+        'mail_cc_err': fields.char('CC', size=128, help='Add cc mail, separate by comma'),
+        'mail_subject_err': fields.char('Subject', size=128, help='You can used format to the subject'),
+        'mail_body_err': fields.text('Body'),
         'format_date': fields.many2one('document.import.format', 'Date', domain="[('type','=','date')]", help='Select the date format on the csv file'),
         'format_time': fields.many2one('document.import.format', 'Time', domain="[('type','=','time')]", help='Select the time format on the csv file'),
         'format_datetime': fields.many2one('document.import.format', 'DateTime', domain="[('type','=','datetime')]", help='Select the datetime format on the csv file'),
@@ -183,7 +189,8 @@ class ir_attachment(osv.osv):
             import_obj = self.pool.get('document.import.list')
             line_obj = self.pool.get('document.import.list.line')
             for f in ids:
-                dir_id = self.read(cr, uid, ids, ['parent_id'], context=context)[0]['parent_id'][0]
+                i_dir = self.browse(cr, uid, f)
+                dir_id = i_dir.parent_id.id
 
                 args = [('disable','=',False), ('directory_id','=', dir_id)]
                 imp_ids = import_obj.search(cr, uid, args, context=context)
@@ -266,15 +273,19 @@ class ir_attachment(osv.osv):
                             lines.append(tmpline)
                     except csv.Error, e:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: csv.Error: %r' % e)
+                        error = 'csv Error, %r' % e
                         integ = False
                     except KeyError, k:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: %r' % k)
+                        error = 'KeyError, %r' % k
                         integ = False
                     except UnicodeError:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Unicode error, convert your file in UTF-8, and retry')
+                        error = 'Unicode error, convert your file in UTF-8, and retry'
                         integ = False
                     except Exception, e:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Error not defined ! : %r' % e)
+                        error = 'Error not defined'
                         integ = False
                     finally:
                         # After treatment, close th StringIO
@@ -299,6 +310,7 @@ class ir_attachment(osv.osv):
 
                         except Exception, e:
                             cr_imp.rollback()
+                            error = '%r' % e
                             logger.notifyChannel('import', netsvc.LOG_ERROR, '%r' % e)
                         finally:
                             cr_imp.close()
@@ -317,6 +329,28 @@ class ir_attachment(osv.osv):
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: file deleted !')
                     except Exception, e:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Error when backup database ! : %r' % e)
+
+                    if imp_data.err_mail:
+                        email_from = imp_data.mail_from
+                        if not email_from:
+                            email_from = config['email_from']
+                        legend = {}
+                        if not isinstance(res, bool) and res[0] >= 0:
+                            legend['count'] = res[0]
+                            email_to = imp_data.mail_cc
+                            subject = imp_data.mail_subject % legend
+                            body = imp_data.mail_body % legend
+                        else:
+                            email_to = imp_data.mail_cc_err
+                            subject = imp_data.mail_subject_err % legend
+                            body = imp_data.mail_body_err % {'error': error}
+
+                        if email_from and email_to:
+                            email(email_from, email_to, subject, body)
+                            logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Sending mail [OK]')
+                        else:
+                            logger.notifyChannel('import', netsvc.LOG_WARNING, 'module document_csv: Sending mail [FAIL]')
+
 
                     # Add trace on the log, when file was integrate
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import new file '.ljust(80, '*'))
