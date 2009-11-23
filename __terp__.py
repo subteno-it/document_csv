@@ -23,7 +23,7 @@
 
 {
     'name': 'Import csv using document management',
-    'version': '1.3',
+    'version': '1.4',
     'category': 'Document',
     'description': """
     This module can import CSV file from the DMS
@@ -42,12 +42,14 @@
         #'security/groups.xml',
         'security/ir.model.access.csv',
         'data/format.xml',
+        'data/directory.xml',
+        'data/content_type.xml',
         #'data/sequence.xml',
         'view/menu.xml',
         'wizard/wizard.xml',
         #'report/report.xml',
-        'data/directory.xml',
         'view/document.xml',
+        'view/export.xml',
     ],
     'demo_xml': [
         'demo/document.xml',

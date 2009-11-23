@@ -4,7 +4,7 @@
         ##############################################################################
         #
         #    document_csv module for OpenERP
-        #    Copyright (C) 2009 SYLEAM ([http://syleam.fr/]) Christophe CHAUVET
+        #    Copyright (C) 2009 SYLEAM ([http://www.syleam.fr]) Christophe CHAUVET
         #
         #    This file is a part of document_csv
         #
@@ -23,15 +23,10 @@
         #
         ##############################################################################
 
-        <menuitem id="menu_document_import_configuration"
-            sequence="30"
-            name="Importation"
-            parent="document.menu_document_configuration"/>
-
-        <menuitem id="menu_document_export_configuration"
-            sequence="30"
-            name="Exportation"
-            parent="document.menu_document_configuration"/>
+        <record model="document.directory.content.type" id="csv">
+            <field name="code">.csv</field>
+            <field name="name">CSV Spreadsheet</field>
+        </record>
 
     </data>
 </openerp>

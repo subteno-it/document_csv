@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        ##############################################################################
+        #
+        #    document_csv module for OpenERP
+        #    Copyright (C) 2009 SYLEAM ([http://www.syleam.fr]) Christophe CHAUVET
+        #
+        #    This file is a part of document_csv
+        #
+        #    document_csv is free software: you can redistribute it and/or modify
+        #    it under the terms of the GNU General Public License as published by
+        #    the Free Software Foundation, either version 3 of the License, or
+        #    (at your option) any later version.
+        #
+        #    document_csv is distributed in the hope that it will be useful,
+        #    but WITHOUT ANY WARRANTY; without even the implied warranty of
+        #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        #    GNU General Public License for more details.
+        #
+        #    You should have received a copy of the GNU General Public License
+        #    along with this program.  If not, see [http://www.gnu.org/licenses/].
+        #
+        ##############################################################################
+
+        <record id="view_document_directory_csv_form" model="ir.ui.view">
+            <field name="name">document.directory</field>
+            <field name="model">document.directory</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="document.view_document_directory_form"/>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page/field/form/field[@name='report_id']" position="after">
+                    <separator string="csv spreadsheet" colspan="4"/>
+                    <field name="csv_export_def"/>
+                    <newline/>
+                </xpath>
+            </field>
+        </record>
+
+        #
+        # CSV line definition
+        #
+        <record id="view_document_export_csv_line_tree" model="ir.ui.view">
+            <field name="name">document.export.csv.line.tree</field>
+            <field name="model">document.export.csv.line</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+
+                <tree string="Lines" editable="bottom">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="view_document_export_csv_form" model="ir.ui.view">
+            <field name="name">document.export.csv.line.form</field>
+            <field name="model">document.export.csv.line</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+
+                <form string="Lines">
+                    <field name="name"/>
+                    <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                    <field name="sequence"/>
+                </form>
+
+            </field>
+        </record>
+
+        #
+        # CSV definition
+        #
+        <record id="view_document_export_csv_tree" model="ir.ui.view">
+            <field name="name">document.export.csv.tree</field>
+            <field name="model">document.export.csv</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+
+                <tree string="CSV Structure">
+                    <field name="name"/>
+                    <field name="model_id"/>
+                    <field name="inc_header"/>
+                    <field name="dom"/>
+                    <field name="ctx"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="view_document_export_csv_form" model="ir.ui.view">
+            <field name="name">document.export.csv.form</field>
+            <field name="model">document.export.csv</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+
+                <form string="CSV Structure">
+                    <field name="name" select="1"/>
+                    <field name="model_id" select="1"/>
+                    <field name="dom" on_change="onchange_context(dom)" select="2" colspan="4"/>
+                    <field name="ctx" on_change="onchange_context(ctx)" select="2" colspan="4"/>
+                    <group col="8" colspan="4">
+                        <field name="inc_header" colspan="2"/>
+                        <field name="last_sep" colspan="2"/>
+                    </group>
+                    <separator string="Lines" colspan="4"/>
+                    <field name="line_ids" colspan="4" nolabel="1"/>
+                </form>
+
+            </field>
+        </record>
+
+
+        <record id="action_document_export_csv" model="ir.actions.act_window">
+            <field name="name">Export CSV</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">document.export.csv</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="action_document_export_csv_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_document_export_csv_tree"/>
+            <field name="act_window_id" ref="action_document_export_csv"/>
+        </record>
+
+        <record id="action_document_export_csv_view_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_document_export_csv_form"/>
+            <field name="act_window_id" ref="action_document_export_csv"/>
+        </record>
+
+        <menuitem action="action_document_export_csv" id="menu_document_export_csv"
+            parent="menu_document_export_configuration" sequence="15"/>
+
+    </data>
+</openerp>
