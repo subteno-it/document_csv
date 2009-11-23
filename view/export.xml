@@ -109,9 +109,20 @@
                     <group col="8" colspan="4">
                         <field name="inc_header" colspan="2"/>
                         <field name="last_sep" colspan="2"/>
+                        <field name="id_use" colspan="2"/>
                     </group>
-                    <separator string="Lines" colspan="4"/>
-                    <field name="line_ids" colspan="4" nolabel="1"/>
+                    <field name="line_ids" colspan="4" nolabel="1" view_mode="tree,form">
+                        <tree string="Lines" editable="bottom">
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                        </tree>
+                        <form string="Lines">
+                            <field name="name"/>
+                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                            <field name="sequence"/>
+                        </form>
+                    </field>
                 </form>
 
             </field>

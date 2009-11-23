@@ -21,6 +21,8 @@
 #
 ##############################################################################
 
+import locale
+import time
 from osv import osv
 from osv import fields
 from StringIO import StringIO
@@ -40,6 +42,7 @@ class export_csv(osv.osv):
         'dom': fields.char('Domain', size=256),
         'inc_header': fields.boolean('Include header'),
         'last_sep': fields.boolean('Include last separator'),
+        'id_use': fields.boolean('Use ID', help='Check this if you want to add id in the first columns'),
         'line_ids': fields.one2many('document.export.csv.line', 'export_id', 'Lines'),
     }
 
@@ -48,6 +51,7 @@ class export_csv(osv.osv):
         'dom': lambda *a: '[]',
         'inc_header': lambda *a: False,
         'last_sep': lambda *a: False,
+        'id_use': lambda *a: False,
     }
 
     def onchange_domain(self, cr, uid, ids, val, context=None):
@@ -120,51 +124,76 @@ class document_directory_content(osv.osv):
         """
         This function generate the CSV file
         """
-        if not context: context = {}
+        if not context: context = node.context
         obj_export = node.content.csv_export_def
         ctx = context.copy()
+        # If lang is not set, retrieve it form user form
+        ctx['lang'] = self.pool.get('res.users').read(cr, uid, [uid], ['context_lang'])[0]['context_lang']
         ctx.update(eval(obj_export.ctx))
         domain = eval(obj_export.dom)
         obj_class = self.pool.get(obj_export.model_id.model)
+        obj_imd = self.pool.get('ir.model.data')
         separator = ';'
 
         fields = obj_class.fields_get(cr, uid, None, context=context)
-        print 'FIELDS: %r' % fields
         ids = obj_class.search(cr, uid, domain, context=context)
         all = ''
 
         # add header in the first line
         if obj_export.inc_header:
+            if obj_export.id_use:
+                all += '"ID"'
             for fld in obj_export.line_ids:
                 all += '"%s"%s' % (fld.name, separator)
             if not obj_export.last_sep:
                 all = all[:-1]
             all += '\n'
 
+        # inherit the locale to use the user one
+        loc = locale.getlocale()
+        lc_all = '%s.UTF-8' % ctx.get('lang', 'en_US')
+        locale.setlocale(locale.LC_ALL, lc_all.encode('utf-8'))
+
         # For each lines, extract the content, and replace it if required
         for obj in obj_class.browse(cr, uid, ids, context=context):
+            if obj_export.id_use:
+                res_id = obj_imd.search(cr, uid, [('model', '=', obj_export.model_id.model), ('res_id', '=', obj.id)], context=context)
+                if res_id:
+                    res = obj_imd.read(cr, uid, res_id, ['module','name'], context=context)[0]
+                    if not res['module']:
+                        all += '"%s";' % res['name']
+                    else:
+                        all += '"%s.%s";' % (res['module'], res['name'])
+                else:
+                    all += '"%s_%d";' % (obj_export.model_id.model.replace('.','_'), obj.id)
             for fld in obj_export.line_ids:
-                print 'FLD: %r' % fld.field_id.name
                 value = getattr(obj, fld.field_id.name)
-                value = value and ustr(value)
-                if type(value) == type(obj):
-                    # TODO: use name_get
-                    value = value.name
+                ftype = fields[fld.field_id.name]['type']
+                if ftype == 'many2one':
+                    ng = self.pool.get(fields[fld.field_id.name]['relation']).name_get(cr, uid, value.id, context=context)
+                    value = False
+                    if len(ng):
+                        value = ng[0][1]
 
-                #print 'VALUES: %r' % value
                 res = ''
-                print 'TYPE: %r' % type(value)
-                if fields[fld.field_id.name]['type'] in ('char','text','selection'):
+                if ftype in ('char','text','selection','many2one'):
                     #if isinstance(value, (str,unicode)):
                     res = '"%s"' % (value or '')
+                elif ftype == 'date' and value:
+                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_FMT) ,time.strptime(value, '%Y-%m-%d'))
+                elif ftype == 'datetime' and value:
+                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_T_FMT) ,time.strptime(value, '%Y-%m-%d %H:%M:%S'))
                 else:
-                    res = '%s' % value
+                    res = '%s' % (value or '')
 
                 all += '%s%s' % (res, separator)
 
             if not obj_export.last_sep:
                 all = all[:-1]
             all += '\n'
+
+        # restore the original locale setting
+        locale.setlocale(locale.LC_ALL, loc)
 
         s = StringIO(all.encode('utf-8'))
         s.name = node
