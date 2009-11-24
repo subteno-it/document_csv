@@ -2,3 +2,6 @@
 "access_document_import_list_all","document.import.list All","document_csv.model_document_import_list","base.group_user",1,0,0,0
 "access_document_import_list_line_all","document.import.list.line All","document_csv.model_document_import_list_line","base.group_user",1,0,0,0
 "access_document_import_format_all","document.import.format All","document_csv.model_document_import_format","base.group_user",1,0,0,0
+"access_document_export_export_csv_all","document.export.csv all","document_csv.model_document_export_csv","base.group_user",1,0,0,0
+"access_document_export_export_csv_line_all","document.export.csv.line All","document_csv.model_document_export_csv_line","base.group_user",1,0,0,0
+
