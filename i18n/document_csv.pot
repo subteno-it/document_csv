@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.6\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2009-11-23 17:11:09+0000\n"
-"PO-Revision-Date: 2009-11-23 17:11:09+0000\n"
+"POT-Creation-Date: 2009-11-24 10:55:00+0000\n"
+"PO-Revision-Date: 2009-11-24 10:55:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -88,6 +88,11 @@ msgstr ""
 #. module: document_csv
 #: model:ir.module.module,shortdesc:document_csv.module_meta_information
 msgid "Import csv using document management"
+msgstr ""
+
+#. module: document_csv
+#: field:document.export.csv,id_emu:0
+msgid "Emulate ID"
 msgstr ""
 
 #. module: document_csv
@@ -324,8 +329,8 @@ msgid "%j for day of the year (eg: 365)"
 msgstr ""
 
 #. module: document_csv
-#: help:document.import.list,backup:0
-msgid "If check, the original file is backup, before remove from the directory"
+#: help:document.export.csv,id_use:0
+msgid "Check this if you want to add id in the first columns"
 msgstr ""
 
 #. module: document_csv
@@ -373,6 +378,11 @@ msgstr ""
 #. module: document_csv
 #: view:document.import.list:0
 msgid "%U for Week number of the year"
+msgstr ""
+
+#. module: document_csv
+#: help:document.import.list,backup:0
+msgid "If check, the original file is backup, before remove from the directory"
 msgstr ""
 
 #. module: document_csv
@@ -590,6 +600,11 @@ msgid "The Object name must start with x_ and not contain any special character 
 msgstr ""
 
 #. module: document_csv
+#: help:document.export.csv,id_emu:0
+msgid "Check this, if you want to generate ID if it doesn't exist in the database"
+msgstr ""
+
+#. module: document_csv
 #: field:document.export.csv.line,field_id:0
 #: field:document.import.list.line,field_id:0
 msgid "Field"
@@ -608,6 +623,11 @@ msgstr ""
 #. module: document_csv
 #: field:document.export.csv,last_sep:0
 msgid "Include last separator"
+msgstr ""
+
+#. module: document_csv
+#: field:document.export.csv,id_use:0
+msgid "Use ID"
 msgstr ""
 
 #. module: document_csv

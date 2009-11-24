@@ -21,6 +21,10 @@
 #
 ##############################################################################
 
+"""
+Add the possibility to export dynamically a CSV file
+"""
+
 import locale
 import time
 from osv import osv
@@ -43,6 +47,7 @@ class export_csv(osv.osv):
         'inc_header': fields.boolean('Include header'),
         'last_sep': fields.boolean('Include last separator'),
         'id_use': fields.boolean('Use ID', help='Check this if you want to add id in the first columns'),
+        'id_emu': fields.boolean('Emulate ID', help="Check this, if you want to generate ID if it doesn't exist in the database"),
         'line_ids': fields.one2many('document.export.csv.line', 'export_id', 'Lines'),
     }
 
@@ -52,6 +57,7 @@ class export_csv(osv.osv):
         'inc_header': lambda *a: False,
         'last_sep': lambda *a: False,
         'id_use': lambda *a: False,
+        'id_emu': lambda *a: False,
     }
 
     def onchange_domain(self, cr, uid, ids, val, context=None):
@@ -161,11 +167,14 @@ class document_directory_content(osv.osv):
                 if res_id:
                     res = obj_imd.read(cr, uid, res_id, ['module','name'], context=context)[0]
                     if not res['module']:
-                        all += '"%s";' % res['name']
+                        all += '"%s"%s' % (res['name'], separator)
                     else:
-                        all += '"%s.%s";' % (res['module'], res['name'])
+                        all += '"%s.%s"%s' % (res['module'], res['name'], separator)
                 else:
-                    all += '"%s_%d";' % (obj_export.model_id.model.replace('.','_'), obj.id)
+                    if obj_export.id_emu:
+                        all += '"%s_%d"%s' % (obj_export.model_id.model.replace('.','_'), obj.id, separator)
+                    else:
+                        all += '""%s' % separator
             for fld in obj_export.line_ids:
                 value = getattr(obj, fld.field_id.name)
                 ftype = fields[fld.field_id.name]['type']

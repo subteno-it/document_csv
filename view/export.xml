@@ -107,9 +107,10 @@
                     <field name="dom" on_change="onchange_context(dom)" select="2" colspan="4"/>
                     <field name="ctx" on_change="onchange_context(ctx)" select="2" colspan="4"/>
                     <group col="8" colspan="4">
-                        <field name="inc_header" colspan="2"/>
-                        <field name="last_sep" colspan="2"/>
-                        <field name="id_use" colspan="2"/>
+                        <field name="inc_header"/>
+                        <field name="last_sep"/>
+                        <field name="id_use"/>
+                        <field name="id_emu"/>
                     </group>
                     <field name="line_ids" colspan="4" nolabel="1" view_mode="tree,form">
                         <tree string="Lines" editable="bottom">
