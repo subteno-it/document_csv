@@ -198,7 +198,10 @@ class ir_attachment(osv.osv):
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: begin import new file '.ljust(80, '*'))
                     import csv
                     import base64
-                    from cStringIO import StringIO
+                    try:
+                        from cStringIO import StringIO
+                    except ImportError:
+                        from StringIO import StringIO
                     imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
                     context.update(eval(imp_data.ctx))
 
