@@ -52,6 +52,7 @@ def _import(self, cr, uid, data, context):
     pool = pooler.get_pool(cr.dbname)
     model_obj = pool.get('ir.model')
     fld_obj = pool.get('ir.model.fields')
+    dat_obj = pool.get('ir.model.data')
     dir_obj = pool.get('document.directory')
     imp_obj = pool.get('document.import.list')
 
@@ -68,8 +69,20 @@ def _import(self, cr, uid, data, context):
     # Search the directory
     dir_ids = dir_obj.search(cr, uid, [('name','=',st['directory'])])
     if not dir_ids:
-        raise wizard.except_wizard(_('Error'), _('No directory with the name %s found') % st['directory'])
+        # We create it, with source directory parent
+        dat_id = dat_obj._get_id(cr, uid, 'document_csv', 'dir_root_import_source')
+        if not dat_id:
+            raise wizard.except_wizard(_('Error'), _('Source directory reference not found'))
+        s_id = dat_obj.read(cr, uid, dat_id, ['res_id'])['res_id']
+        dir_args = {
+            'name': st['directory'],
+            'parent_id': s_id,
+            'user_id': 1,
+            'type': 'directory',
+        }
+        dir_ids = [dir_obj.create(cr, uid, dir_args, context=context)]
     dir_id = dir_ids[0]
+    #raise wizard.except_wizard(_('Cool'), _('Ok'))
 
     imp = {
         'name': st['name'],
