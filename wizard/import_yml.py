@@ -55,6 +55,7 @@ def _import(self, cr, uid, data, context):
     dat_obj = pool.get('ir.model.data')
     dir_obj = pool.get('document.directory')
     imp_obj = pool.get('document.import.list')
+    act_obj = pool.get('ir.actions.act_window')
 
     content = base64.decodestring(data['form']['filename'])
     st = yaml.load(content)
@@ -116,7 +117,11 @@ def _import(self, cr, uid, data, context):
     if not imp_id:
         raise wizard.except_wizard(_('Error'), _('Failed to create the list entry'))
 
-    return {}
+    result = dat_obj._get_id(cr, uid, 'document_csv', 'action_document_import_list')
+    id = dat_obj.read(cr, uid, result, ['res_id'])['res_id']
+    result = act_obj.read(cr, uid, id)
+    result['domain'] ="[('id','in', ["+','.join(map(str, [imp_id]))+"])]"
+    return result
 
 
 class import_yaml(wizard.interface):
@@ -132,9 +137,10 @@ class import_yaml(wizard.interface):
             }
         },
         'valid': {
-            'actions': [_import],
+            'actions': [],
             'result': {
-                'type': 'state',
+                'type': 'action',
+                'action': _import,
                 'state': 'end'
             }
         }
