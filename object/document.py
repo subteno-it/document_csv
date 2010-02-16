@@ -299,17 +299,20 @@ class ir_attachment(osv.osv):
                         # Use new cusrsor to integrate the data, because if failed the backup cannot be perform
                         cr_imp = pooler.get_db(cr.dbname).cursor()
                         try:
-                            res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
-                            if res[0] >= 0:
-                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
-                                cr_imp.commit()
+                            if imp_data.err_reject:
+                                res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
+                                if res[0] >= 0:
+                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
+                                    cr_imp.commit()
+                                else:
+                                    cr_imp.rollback()
+                                    d = ''
+                                    for key,val in res[1].items():
+                                        d += ('\t%s: %s\n' % (str(key),str(val)))
+                                    error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
+                                    logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
                             else:
-                                cr_imp.rollback()
-                                d = ''
-                                for key,val in res[1].items():
-                                    d += ('\t%s: %s\n' % (str(key),str(val)))
-                                error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
-                                logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: unit reject not implemented')
 
                         except Exception, e:
                             cr_imp.rollback()
