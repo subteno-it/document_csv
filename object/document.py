@@ -312,7 +312,34 @@ class ir_attachment(osv.osv):
                                     error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
                                     logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
                             else:
-                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: unit reject not implemented')
+                                count_success = 0
+                                count_errors = 0
+                                list_errors = []
+
+                                for li in lines:
+                                    print 'Next '
+                                    try:
+                                        res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
+                                    except Exception, e:
+                                        res = [-1,{},repr(e),'']
+
+                                    if res[0] >= 0:
+                                        count_success += 1
+                                        cr_imp.commit()
+                                        # After the commit we must recreate
+                                        #cr_imp = pooler.get_db(cr.dbname).cursor()
+                                    else:
+                                        count_errors += 1
+                                        cr_imp.rollback()
+                                        # After the commit we must recreate
+                                        #cr_imp = pooler.get_db(cr.dbname).cursor()
+                                        d = ''
+                                        for key,val in res[1].items():
+                                            d += ('\t%s: %s\n' % (str(key),str(val)))
+                                        list_errors.append('Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3]))
+
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % count_success)
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) rejected !' % count_errors)
 
                         except Exception, e:
                             cr_imp.rollback()
