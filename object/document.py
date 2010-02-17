@@ -205,6 +205,14 @@ class ir_attachment(osv.osv):
                     imp_data = import_obj.browse(cr, uid, imp_ids[0], context=context)
                     context.update(eval(imp_data.ctx))
 
+                    ##
+                    # Compose the log file
+                    #
+                    logfp = StringIO()
+                    def log_compose(message):
+                        logfp.write(message+'\n')
+                        return message
+
                     imp = model_obj.read(cr, uid, imp_data.model_id.id, context=context)
                     model = imp['model']
 
@@ -238,10 +246,10 @@ class ir_attachment(osv.osv):
                             else:
                                 header.append(h['field'])
 
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Object: %s' % imp_data.model_id.model)
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Context: %r' % context)
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Columns header: %r' % header)
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Unique key (XML id): %r' % uniq_key)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Object: %s' % imp_data.model_id.model))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Context: %r' % context))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Columns header: %r' % header))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Unique key (XML id): %r' % uniq_key))
 
                     # Compose the line from the csv import
                     lines = []
@@ -252,11 +260,11 @@ class ir_attachment(osv.osv):
 
                     fp = StringIO(val)
                     sep = chr(ord(imp_data.csv_sep[0]))
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Separator: %s ' % imp_data.csv_sep)
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Separator: %s ' % imp_data.csv_sep))
                     esc=None
                     if imp_data.csv_esc:
                         esc = chr(ord(imp_data.csv_esc[0]))
-                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Escape: %s ' % imp_data.csv_esc)
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Escape: %s ' % imp_data.csv_esc))
 
                     integ = True
                     try:
@@ -275,19 +283,19 @@ class ir_attachment(osv.osv):
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                             lines.append(tmpline)
                     except csv.Error, e:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: csv.Error: %r' % e)
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: csv.Error: %r' % e))
                         error = 'csv Error, %r' % e
                         integ = False
                     except KeyError, k:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: %r' % k)
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: %r' % k))
                         error = 'KeyError, %r' % k
                         integ = False
                     except UnicodeError:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Unicode error, convert your file in UTF-8, and retry')
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: Unicode error, convert your file in UTF-8, and retry'))
                         error = 'Unicode error, convert your file in UTF-8, and retry'
                         integ = False
                     except Exception, e:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Error not defined ! : %r' % e)
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: Error not defined ! : %r' % e))
                         error = 'Error not defined'
                         integ = False
                     finally:
@@ -295,14 +303,15 @@ class ir_attachment(osv.osv):
                         fp.close()
 
                     if integ:
-                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: start import')
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: start import'))
                         # Use new cusrsor to integrate the data, because if failed the backup cannot be perform
                         cr_imp = pooler.get_db(cr.dbname).cursor()
                         try:
                             if imp_data.err_reject:
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Global mode'))
                                 res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
                                 if res[0] >= 0:
-                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % res[0])
+                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: %d line(s) imported !' % res[0]))
                                     cr_imp.commit()
                                 else:
                                     cr_imp.rollback()
@@ -310,14 +319,14 @@ class ir_attachment(osv.osv):
                                     for key,val in res[1].items():
                                         d += ('\t%s: %s\n' % (str(key),str(val)))
                                     error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
-                                    logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: %r' % ustr(error))
+                                    logger.notifyChannel('import', netsvc.LOG_ERROR, log_compose('module document_csv: %r' % ustr(error)))
                             else:
                                 count_success = 0
                                 count_errors = 0
                                 list_errors = []
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: Unit mode'))
 
                                 for li in lines:
-                                    print 'Next '
                                     try:
                                         res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
                                     except Exception, e:
@@ -326,42 +335,52 @@ class ir_attachment(osv.osv):
                                     if res[0] >= 0:
                                         count_success += 1
                                         cr_imp.commit()
-                                        # After the commit we must recreate
-                                        #cr_imp = pooler.get_db(cr.dbname).cursor()
                                     else:
                                         count_errors += 1
                                         cr_imp.rollback()
-                                        # After the commit we must recreate
-                                        #cr_imp = pooler.get_db(cr.dbname).cursor()
                                         d = ''
                                         for key,val in res[1].items():
                                             d += ('\t%s: %s\n' % (str(key),str(val)))
                                         list_errors.append('Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3]))
 
-                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) imported !' % count_success)
-                                logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: %d line(s) rejected !' % count_errors)
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: %d line(s) imported !' % count_success))
+                                logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: %d line(s) rejected !' % count_errors))
 
                         except Exception, e:
                             cr_imp.rollback()
                             error = '%r' % e
-                            logger.notifyChannel('import', netsvc.LOG_ERROR, '%r' % e)
+                            logger.notifyChannel('import', netsvc.LOG_ERROR, log_compose('%r' % e))
                         finally:
                             cr_imp.close()
 
-                        logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: end import')
+                        logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: end import'))
                     else:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: import canceled, correct these errors and retry')
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: import canceled, correct these errors and retry'))
 
                     try:
                         if imp_data.backup:
                             bck_file = time.strftime(imp_data.backup_filename)
                             self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
-                            logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: backup file: %s ' % bck_file)
+                            logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: backup file: %s ' % bck_file))
                         else:
                             self.unlink(cr, uid, ids)
-                            logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: file deleted !')
+                            logger.notifyChannel('import', netsvc.LOG_DEBUG, log_compose('module document_csv: file deleted !'))
                     except Exception, e:
-                        logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: Error when backup database ! : %r' % e)
+                        logger.notifyChannel('import', netsvc.LOG_INFO, log_compose('module document_csv: Error when backup database ! : %r' % e))
+
+                    ## save the log file
+                    log_name = time.strftime(imp_data.log_filename)
+                    log_enc = base64.encodestring(logfp.getvalue())
+                    logfp.close()
+                    log_args = {
+                        'name': log_name,
+                        'datas_fname': log_name,
+                        'parent_id': imp_data.log_dir_id.id,
+                        'datas': log_enc,
+                    }
+                    if not self.create(cr, uid, log_args):
+                        logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: impossible to create the logfile!')
+
 
                     if imp_data.err_mail:
                         email_from = imp_data.mail_from
