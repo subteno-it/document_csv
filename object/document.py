@@ -352,8 +352,8 @@ class ir_attachment(osv.osv):
 
                         except Exception, e:
                             cr_imp.rollback()
-                            error = '%r' % e
-                            logger.notifyChannel('import', netsvc.LOG_ERROR, log_compose('%r' % e))
+                            error = e.message
+                            logger.notifyChannel('import', netsvc.LOG_ERROR, log_compose(e.message))
                         finally:
                             cr_imp.close()
 
