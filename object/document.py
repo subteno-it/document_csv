@@ -237,9 +237,11 @@ class ir_attachment(osv.osv):
 
                     # Compose the header
                     header = []
+                    rej_header = []
                     if uniq_key:
                         header.append(u'id')
                     for h in fld:
+                        rej_header.append(h['name'])
                         if h['type'] not in ('many2one','one2many','many2many'):
                             header.append(h['field'])
                         else:
@@ -250,11 +252,13 @@ class ir_attachment(osv.osv):
 
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Object: %s' % imp_data.model_id.model))
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Context: %r' % context))
-                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Columns header: %s' % ', '.join(header)))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Columns header original : %s' % ', '.join(rej_header)))
+                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Columns header translate: %s' % ', '.join(header)))
                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Unique key (XML id): %r' % uniq_key))
 
                     # Compose the line from the csv import
                     lines = []
+                    rej_lines = []
 
                     val = ''
                     if 'datas' in vals:
@@ -273,6 +277,7 @@ class ir_attachment(osv.osv):
                         csvfile = csv.DictReader(fp, delimiter=sep, quotechar=esc)
                         for c in csvfile:
                             tmpline = []
+                            rejline = []
                             if uniq_key:
                                 tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.','_') ,str(c[uniq_key])))
                             for f in fld:
@@ -282,8 +287,10 @@ class ir_attachment(osv.osv):
                                         if f['ref'] == 'id':
                                             fld_name = '%s_%s' % (f['relation'].replace('.','_') ,c[f['name']])
                                 tmpline.append(fld_name)
+                                rejline.append(c[f['name']])
                             logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: line: %r' % tmpline)
                             lines.append(tmpline)
+                            rej_lines.append(rejline)
                     except csv.Error, e:
                         logger.notifyChannel('import', netsvc.LOG_INFO, 'module document_csv: '+log_compose('csv.Error: %r' % e))
                         error = 'csv Error, %r' % e
@@ -323,11 +330,14 @@ class ir_attachment(osv.osv):
                                     error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
                                     logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: '+log_compose('%r' % ustr(error)))
                             else:
+                                rejfp = StringIO()
                                 count_success = 0
                                 count_errors = 0
-                                list_errors = []
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Unit mode'))
+                                rej_file = csv.writer(rejfp, delimiter=sep, quotechar=esc, quoting=csv.QUOTE_NONNUMERIC)
+                                rej_file.writerow(rej_header)
 
+                                cpt_lines = 0
                                 for li in lines:
                                     try:
                                         res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
@@ -340,15 +350,31 @@ class ir_attachment(osv.osv):
                                     else:
                                         count_errors += 1
                                         cr_imp.rollback()
-                                        d = ''
-                                        for key,val in res[1].items():
-                                            d += ('\t%s: %s\n' % (str(key),str(val)))
-                                        list_errors.append('Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3]))
-                                        log_compose('Error line: %s' % ', '.join(li))
+                                        #d = ''
+                                        #for key,val in res[1].items():
+                                        #    d += ('\t%s: %s\n' % (str(key),str(val)))
+                                        log_compose(4*'*')
+                                        log_compose('Error line %d: %s' % (cpt_lines + 2, ', '.join(rej_lines[cpt_lines])))
                                         log_compose('Error message: %s' % res[2])
+                                        rej_file.writerow(rej_lines[cpt_lines])
+                                    cpt_lines += 1
 
+                                log_compose(4*'*')
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) imported !' % count_success))
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) rejected !' % count_errors))
+
+                                if count_errors:
+                                    rej_name = time.strftime(imp_data.reject_filename)
+                                    rej_enc = base64.encodestring(rejfp.getvalue())
+                                    rejfp.close()
+                                    rej_args = {
+                                        'name': rej_name,
+                                        'datas_fname': rej_name,
+                                        'parent_id': imp_data.reject_dir_id.id,
+                                        'datas': rej_enc,
+                                    }
+                                    if not self.create(cr, uid, rej_args):
+                                        logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: impossible to create the reject file!')
 
                         except Exception, e:
                             cr_imp.rollback()
@@ -383,8 +409,7 @@ class ir_attachment(osv.osv):
                         'datas': log_enc,
                     }
                     if not self.create(cr, uid, log_args):
-                        logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: impossible to create the logfile!')
-
+                        logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: impossible to create the log file!')
 
                     if imp_data.err_mail:
                         email_from = imp_data.mail_from
