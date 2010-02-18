@@ -339,6 +339,7 @@ class ir_attachment(osv.osv):
 
                                 cpt_lines = 0
                                 for li in lines:
+                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Import line %d' % (cpt_lines + 1))
                                     try:
                                         res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
                                     except Exception, e:
