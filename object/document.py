@@ -351,16 +351,13 @@ class ir_attachment(osv.osv):
                                     else:
                                         count_errors += 1
                                         cr_imp.rollback()
-                                        #d = ''
-                                        #for key,val in res[1].items():
-                                        #    d += ('\t%s: %s\n' % (str(key),str(val)))
-                                        log_compose(4*'*')
+                                        log_compose(4 * '*')
                                         log_compose('Error line %d: %s' % (cpt_lines + 2, ', '.join(rej_lines[cpt_lines])))
                                         log_compose('Error message: %s' % res[2])
                                         rej_file.writerow(rej_lines[cpt_lines])
                                     cpt_lines += 1
 
-                                log_compose(4*'*')
+                                log_compose(4 * '*')
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) imported !' % count_success))
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) rejected !' % count_errors))
 
