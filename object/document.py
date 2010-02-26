@@ -315,10 +315,11 @@ class ir_attachment(osv.osv):
                         logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('start import'))
                         # Use new cusrsor to integrate the data, because if failed the backup cannot be perform
                         cr_imp = pooler.get_db(cr.dbname).cursor()
+                        current_model = self.pool.get(imp_data.model_id.model)
                         try:
                             if imp_data.err_reject:
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Global mode'))
-                                res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
+                                res = current_model.import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
                                 if res[0] >= 0:
                                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) imported !' % res[0]))
                                     cr_imp.commit()
@@ -329,6 +330,10 @@ class ir_attachment(osv.osv):
                                         d += ('\t%s: %s\n' % (str(key),str(val)))
                                     error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d,res[2],res[3])
                                     logger.notifyChannel('import', netsvc.LOG_ERROR, 'module document_csv: '+log_compose('%r' % ustr(error)))
+
+                                if current_model._parent_store:
+                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Compute the parent_store'))
+                                    current_model._parent_store_compute(cr)
                             else:
                                 rejfp = StringIO()
                                 count_success = 0
@@ -341,7 +346,7 @@ class ir_attachment(osv.osv):
                                 for li in lines:
                                     logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: Import line %d' % (cpt_lines + 1))
                                     try:
-                                        res = self.pool.get(imp_data.model_id.model).import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
+                                        res = current_model.import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
                                     except Exception, e:
                                         res = [-1,{},e.message,'']
 
@@ -360,6 +365,9 @@ class ir_attachment(osv.osv):
                                 log_compose(4 * '*')
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) imported !' % count_success))
                                 logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('%d line(s) rejected !' % count_errors))
+                                if current_model._parent_store:
+                                    logger.notifyChannel('import', netsvc.LOG_DEBUG, 'module document_csv: '+log_compose('Compute the parent_store'))
+                                    current_model._parent_store_compute(cr)
 
                                 if count_errors:
                                     rej_name = time.strftime(imp_data.reject_filename)
