@@ -50,14 +50,20 @@ def _init(self, cr, uid, data, context):
     doc_obj = pool.get('document.import.list')
     doc = doc_obj.browse(cr, uid, data['id'], context=context)
     yml_file = '%s.yml' % doc.name.lower().replace(' ','_')
-    content = {}
-    content['name'] = doc.name
-    content['object'] = doc.model_id.model
-    content['directory'] = doc.directory_id.name
-    content['context'] = doc.ctx
-    content['separator'] = doc.csv_sep
-    content['escape'] = doc.csv_esc
-    content['encoding'] = doc.encoding
+    content = {
+        'version': '1.1',
+        'name': doc.name,
+        'object': doc.model_id.model,
+        'directory': doc.directory_id.name,
+        'context': doc.ctx,
+        'separator': doc.csv_sep,
+        'escape': doc.csv_esc,
+        'encoding': doc.encoding,
+        'reject_all': doc.err_reject,
+        'log_filename': doc.log_filename,
+        'reject_filename': doc.reject_filename,
+        'backup_filename': doc.backup_filename,
+    }
     lines = []
     for l in doc.line_ids:
         line = {}

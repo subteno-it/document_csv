@@ -94,6 +94,11 @@ def _import(self, cr, uid, data, context):
         'csv_esc': st.get('escape', '"'),
         'encoding': st.get('encoding', 'utf-8'),
     }
+    if st.get('version', '0.0') == '1.1':
+        imp['err_reject'] = st.get('reject_all', False)
+        imp['log_filename'] = st.get('log_filename', False)
+        imp['reject_filename'] = st.get('reject_filename', False)
+        imp['backup_filename'] = st.get('backup_filename', False)
 
     lines_ids = []
     for i in st['lines']:
