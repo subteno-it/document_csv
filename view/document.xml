@@ -136,13 +136,13 @@
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
                                         <tree string="Columns">
                                             <field name="name"/>
-                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]" context="{'import': True}"/>
                                             <field name="relation"/>
                                             <field name="refkey"/>
                                         </tree>
                                         <form string="Columns">
                                             <field name="name"/>
-                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"/>
+                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]" context="{'import': True}"/>
                                             <field name="relation"/>
                                             <field name="refkey"/>
                                         </form>
