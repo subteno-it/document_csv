@@ -188,7 +188,7 @@
                             <group colspan="4" col="12">
                                 <separator string="From" colspan="4"/>
                                 <field name="mail_from" colspan="12" nolabel="1"/>
-                                <group colspan="6" col="4">
+                                <group colspan="6" col="4" string="On success">
                                     <separator string="To" colspan="4"/>
                                     <field name="mail_cc" colspan="4" nolabel="1"/>
                                     <separator string="Subject" colspan="4"/>
@@ -196,7 +196,7 @@
                                     <separator string="Mail body" colspan="4"/>
                                     <field name="mail_body" colspan="4" nolabel="1" height="400"/>
                                 </group>
-                                <group colspan="6" col="4">
+                                <group colspan="6" col="4" string="On error">
                                     <separator string="To" colspan="4"/>
                                     <field name="mail_cc_err" colspan="4" nolabel="1"/>
                                     <separator string="Subject" colspan="4"/>
