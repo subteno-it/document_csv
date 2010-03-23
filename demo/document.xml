@@ -17,12 +17,12 @@
             <field name="csv_sep">;</field>
             <field name="err_reject" eval="0"/>
             <field name="err_mail" eval="1"/>
-            <field name="backup_filename">sample-%Y-%m-%d.csv</field>
+            <field name="backup_filename">partner-%Y-%m-%d.csv</field>
             <field name="backup_dir_id" ref="dir_root_import_source"/>
             <field name="backup" eval="1"/>
-            <field name="reject_filename">reject-%Y-%m-%d.csv</field>
+            <field name="reject_filename">partner-%Y-%m-%d.csv</field>
             <field name="reject_dir_id" ref="dir_root_import_reject"/>
-            <field name="log_filename">log-%Y-%m-%d.csv</field>
+            <field name="log_filename">partner-%Y-%m-%d_%H-%M-%S.log</field>
             <field name="log_dir_id" ref="dir_root_import_log"/>
         </record>
 
