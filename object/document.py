@@ -189,7 +189,7 @@ class ir_attachment(osv.osv):
             import_obj = self.pool.get('document.import.list')
             line_obj = self.pool.get('document.import.list.line')
             for f in ids:
-                i_dir = self.browse(cr, uid, f)
+                i_dir = self.browse(cr, uid, int(f), context=context)
                 dir_id = i_dir.parent_id.id
 
                 args = [('disable','=',False), ('directory_id','=', dir_id)]
