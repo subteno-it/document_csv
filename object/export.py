@@ -31,6 +31,7 @@ from osv import osv
 from osv import fields
 from StringIO import StringIO
 from tools import ustr
+from tools.translate import _
 
 class export_csv(osv.osv):
     """
