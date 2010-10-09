@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    document_csv module for OpenERP, profile for 2ed customer
-#    Copyright (C) 2009 SYLEAM (<http://www.Syleam.fr>) Christophe CHAUVET
+#    document_csv module for OpenERP, module to import data from CSV source
+#    Copyright (C) 2009-2010 SYLEAM (<http://www.Syleam.fr>) 
+#                  Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of document_csv
 #
