@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    2ed_profile module for OpenERP, profile for 2ed customer
-#    Copyright (C) 2009 SYLEAM (<http://www.Syleam.fr>) Christophe CHAUVET
+#    document_csv module for OpenERP, module to import data from CSV source
+#    Copyright (C) 2009-2010 SYLEAM (<http://www.Syleam.fr>) 
+#                  Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
-#    This file is a part of 2ed_profile
+#    This file is a part of document_csv
 #
-#    2ed_profile is free software: you can redistribute it and/or modify
+#    document_csv is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    2ed_profile is distributed in the hope that it will be useful,
+#    document_csv is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
@@ -23,7 +24,7 @@
 
 {
     'name': 'Import csv using document management',
-    'version': '1.4',
+    'version': '1.4.1',
     'category': 'Document',
     'description': """
     This module can import CSV file from the DMS
