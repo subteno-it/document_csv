@@ -54,6 +54,7 @@ class import_format(osv.osv):
 
 import_format()
 
+# TODO retrieve list of encoding from locale library
 _encoding = [
     ('utf-8', 'UTF 8'),
     ('cp1252', 'CP 1252 Windows'),
