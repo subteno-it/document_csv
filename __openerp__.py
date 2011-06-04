@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    document_csv module for OpenERP, module to import data from CSV source
-#    Copyright (C) 2009-2010 SYLEAM (<http://www.Syleam.fr>) 
+#    Copyright (C) 2009-2011 SYLEAM (<http://www.Syleam.fr>) 
 #                  Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of document_csv
@@ -30,14 +30,11 @@
     This module can import CSV file from the DMS
     - Put with FTP client in the directory
     - The import start automaticaly after full transfert
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !!! This module works with Python YAML Module, install it before use the import or export !!!
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     """,
-    'author': 'Syleam',
+    'author': 'SYLEAM',
     'depends': [
         'document',
+        'base_tools',
     ],
     'update_xml': [
         #'security/groups.xml',
@@ -50,7 +47,7 @@
         'wizard/wizard.xml',
         #'report/report.xml',
         'view/document.xml',
-        'view/export.xml',
+        #'view/export.xml',
     ],
     'demo_xml': [
         'demo/document.xml',

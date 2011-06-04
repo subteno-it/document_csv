@@ -91,7 +91,6 @@
 
                 <tree string="Import list" colors="#f66a00:disable==True">
                     <field name="name"/>
-                    <field name="directory_id"/>
                     <field name="model_id"/>
                     <field name="ctx"/>
                     <field name="log_dir_id"/>
@@ -115,7 +114,6 @@
                         <separator string="General" colspan="6"/>
                         <field name="name" select="1"/>
                         <field name="model_id" select="1"/>
-                        <field name="directory_id" select="1" domain="[('type','=','directory')]"/>
                         <field name="ctx" on_change="onchange_context(ctx)" colspan="4"/>
                         <field name="disable" select="2"/>
                     </group>
