@@ -132,7 +132,7 @@
                                 </group>
                                 <group colspan="4">
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
-                                        <tree string="Columns">
+                                        <tree string="Columns" editable="bottom">
                                             <field name="name"/>
                                             <field name="field_id" domain="[('model_id','=', parent.model_id)]" context="{'import': True}"/>
                                             <field name="relation"/>
