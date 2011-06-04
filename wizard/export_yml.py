@@ -31,7 +31,7 @@ init_form = """<?xml version="1.0" ?>
 <form string="Export structure">
   <separator string="The export file is available, save it to a local drive" colspan="4"/>
   <field name="name" invisible="1"/>
-  <field name="filename" colspan="4" width="350" filename="name"/>
+  <field name="filename" colspan="4" width="350" fieldname="name" readonly="1"/>
 </form>
 """
 
@@ -54,7 +54,6 @@ def _init(self, cr, uid, data, context):
         'version': '1.1',
         'name': doc.name,
         'object': doc.model_id.model,
-        'directory': doc.directory_id.name,
         'context': doc.ctx,
         'separator': doc.csv_sep,
         'escape': doc.csv_esc,
