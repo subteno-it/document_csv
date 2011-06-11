@@ -59,6 +59,8 @@ class LaunchImport(osv.osv_memory):
         """
         Save file, and execute importation
         """
+        cur = self.browse(cr, uid, ids[0], context=context)
+        self.pool.get('ir.attachment').import_csv(cr, uid, cur.import_list, cur.import_file, cur.email_result, context=context)
         return {'type': 'ir.actions.act_window_close'}
 
 LaunchImport()
