@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        ##############################################################################
+        #
+        #    document_csv module for OpenERP, Import structure in CSV
+        #    Copyright (C) 2011 SYLEAM ([http://www.syleam.fr/]) 
+        #              Christophe CHAUVET [christophe.chauvet@syleam.fr]
+        #
+        #    This file is a part of document_csv
+        #
+        #    document_csv is free software: you can redistribute it and/or modify
+        #    it under the terms of the GNU Affero General Public License as published by
+        #    the Free Software Foundation, either version 3 of the License, or
+        #    (at your option) any later version.
+        #
+        #    document_csv is distributed in the hope that it will be useful,
+        #    but WITHOUT ANY WARRANTY; without even the implied warranty of
+        #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        #    GNU Affero General Public License for more details.
+        #
+        #    You should have received a copy of the GNU Affero General Public License
+        #    along with this program.  If not, see [http://www.gnu.org/licenses/].
+        #
+        ##############################################################################
+
+        <record id="view_wizard_launch_import_csv_form" model="ir.ui.view">
+            <field name="name">wizard.launch.import.csv.form</field>
+            <field name="model">wizard.launch.import.csv</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Import Form">
+                    <separator string="Select format for this import" colspan="4"/>
+                    <field name="import_list" nolabel="1" />
+                    <separator string="Select file to import" colspan="4"/>
+                    <field name="import_file" nolabel="1" />
+                    <separator string="Email to send notificaiton when import is finished" colspan="4"/>
+                    <field name="email_result" nolabel="1" />
+                    <separator string="" colspan="4" />
+                    <group colspan="4" col="6">
+                        <label string ="" colspan="2"/>
+                        <button icon="gtk-cancel" special="cancel" string="Cancel"/>
+                        <button  icon="terp-gtk-go-back-rtl" string="Start" name="launch_import" type="object"/>
+                   </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_wizard_launch_import_csv_view">
+            <field name="name">Import Form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.launch.import.csv</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_launch_import_wizard" 
+            parent="menu_document_import_configuration"
+            sequence="20"
+            action="action_wizard_launch_import_csv_view"/>
+
+    </data>
+</openerp>

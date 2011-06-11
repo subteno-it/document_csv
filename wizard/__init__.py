@@ -30,5 +30,6 @@ except ImportError:
 
 import export_yml
 import import_yml
+import launch
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

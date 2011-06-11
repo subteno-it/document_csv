@@ -48,6 +48,7 @@
         #'report/report.xml',
         'view/document.xml',
         #'view/export.xml',
+        'wizard/launch_view.xml',
     ],
     'demo_xml': [
         'demo/document.xml',
