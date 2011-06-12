@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    document_csv module for OpenERP
-#    Copyright (C) 2009 SYLEAM (<http://www.syleam.fr>) Christophe CHAUVET
+#    Copyright (C) 2009-2011 SYLEAM (<http://www.syleam.fr>) Christophe CHAUVET
 #
 #    This file is a part of document_csv
 #
