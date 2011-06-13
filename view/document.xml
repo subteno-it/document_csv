@@ -126,9 +126,9 @@
                                     <field name="csv_esc" colspan="4"/>
                                     <field name="encoding" colspan="4"/>
                                     <separator string="Format" colspan="4"/>
-                                    <field name="format_date" colspan="4"/>
-                                    <field name="format_time" colspan="4"/>
-                                    <field name="format_datetime" colspan="4"/>
+                                    <field name="format_date" colspan="4" widget="selection"/>
+                                    <field name="format_time" colspan="4" widget="selection"/>
+                                    <field name="format_datetime" colspan="4" widget="selection"/>
                                 </group>
                                 <group colspan="4">
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
