@@ -22,25 +22,50 @@
 ##############################################################################
 
 from osv import osv
-from osv import fields
 
 class ir_model_fields(osv.osv):
     _inherit = 'ir.model.fields'
+
+    def search_inherits(self, cr, uid, model_id, context=None):
+        """
+        For a model, retrieve it inherits fields
+        """
+        if context is None:
+            context = {}
+
+        model_obj = self.pool.get('ir.model')
+        inherits = self.pool.get(model_obj.read(cr, uid, model_id, ['model'])['model'])._inherits
+        mod_ids = [model_id]
+        if inherits:
+            mod_ids.extend(model_obj.search(cr, uid, [('model','in', inherits.keys())]))
+        return mod_ids
+
+
+    def search(self, cr, uid, args, offset=0, limit=None, order=None, context=None, count=False):
+        """
+        Search must be include inherits
+        """
+        if context is None:
+            context = {}
+
+        if context.get('import'):
+            model_id = [x[2] for x in args if x[0] == 'model_id'][0]
+            mod_ids = self.search_inherits(cr, uid, model_id, context=context)
+            args = [x for x in args if x[0] != 'model_id']
+            args.append(('model_id','in', mod_ids))
+        return super(ir_model_fields, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
 
     def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=80):
         """
         Extend this method to retrieve the model and these inherits
         """
+        if context is None:
+            context = {}
+
         if context.get('import'):
-            model_obj = self.pool.get('ir.model')
-            model = model_obj.read(cr, uid, args[0][2], ['model'])
-            inherits = self.pool.get(model['model'])._inherits
-            if inherits:
-                mod_ids = [args[0][2]]
-                for m in inherits:
-                    mod_id = model_obj.search(cr, uid, [('model','=', m)])
-                    mod_ids.append(mod_id[0])
-                args = [('model_id','in', mod_ids)]
+            model_id = [x[2] for x in args if x[0] == 'model_id'][0]
+            mod_ids = self.search_inherits(cr, uid, model_id, context=context)
+            args = [('model_id','in', mod_ids)]
         return super(ir_model_fields, self).name_search(cr, uid, name, args, operator, context, limit)
 
 ir_model_fields()
