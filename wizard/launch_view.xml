@@ -59,7 +59,7 @@
         </record>
 
         <menuitem id="menu_launch_import_wizard" 
-            parent="menu_document_import_configuration"
+            parent="menu_document_exchange"
             sequence="20"
             action="action_wizard_launch_import_csv_view"/>
 

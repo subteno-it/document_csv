@@ -24,7 +24,7 @@
         ##############################################################################
 
 
-        <menuitem id="menu_document_import"
+        <menuitem id="menu_document_exchange"
             sequence="30"
             name="Document exchange"
             parent="base.menu_tools"/>
@@ -32,7 +32,7 @@
         <menuitem id="menu_document_import_configuration"
             sequence="30"
             name="Importation"
-            parent="menu_document_import"/>
+            parent="base.menu_lunch_survey_root"/>
 
     </data>
 </openerp>
