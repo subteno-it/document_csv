@@ -282,6 +282,7 @@ class ir_attachment(osv.osv):
 
         integ = True
         try:
+            _logger.debug('module document_csv: ' + log_compose('Read the CSV file'))
             csvfile = csv.DictReader(cfp, delimiter=sep, quotechar=esc)
             for c in csvfile:
                 tmpline = []
@@ -356,7 +357,7 @@ class ir_attachment(osv.osv):
                         try:
                             res = current_model.import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
                         except Exception, e:
-                            res = [-1, {}, e.message, '']
+                            res = [-1, {}, e.args[0], '']
 
                         if res[0] >= 0:
                             count_success += 1
