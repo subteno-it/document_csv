@@ -181,9 +181,13 @@ class import_list_line(osv.osv):
         'list_id': fields.many2one('document.import.list', 'Line', required=True, ondelete='cascade'),
         'name': fields.char('Field name', size=128, required=True),
         'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
-        'relation': fields.selection([('id', 'ID'), ('db_id', 'DB ID'), ('search', 'Search')], 'Field relation', help='Search use name_search to match the record'),
+        'relation': fields.selection([('', ''), ('id', 'ID'), ('db_id', 'DB ID'), ('search', 'Search')], 'Field relation', help='Search use name_search to match the record'),
         'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
         'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
+    }
+
+    _defaults = {
+        'relation': lambda *a: '',
     }
 
 import_list_line()
