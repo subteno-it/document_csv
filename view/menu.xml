@@ -31,7 +31,7 @@
 
         <menuitem id="menu_document_import_configuration"
             sequence="30"
-            name="Importation"
+            name="Exchange Datas"
             parent="base.menu_lunch_survey_root"/>
 
     </data>
