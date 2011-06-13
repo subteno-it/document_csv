@@ -132,6 +132,7 @@ class import_list(osv.osv):
         'format_date': fields.many2one('document.import.format', 'Date', domain="[('type','=','date')]", help='Select the date format on the csv file'),
         'format_time': fields.many2one('document.import.format', 'Time', domain="[('type','=','time')]", help='Select the time format on the csv file'),
         'format_datetime': fields.many2one('document.import.format', 'DateTime', domain="[('type','=','datetime')]", help='Select the datetime format on the csv file'),
+        'notes': fields.text('Note', help='Add note for this import '),
     }
 
     _defaults = {
@@ -142,6 +143,7 @@ class import_list(osv.osv):
         'backup_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.csv',
         'reject_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.rej',
         'log_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.log',
+        'notes': lambda *a: False,
     }
 
     def onchange_context(self, cr, uid, ids, val, context=None):

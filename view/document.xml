@@ -206,6 +206,9 @@
                                 <label align="0.0" string="%%(count)s: Number of imported lines" colspan="4"/>
                             </group>
                         </page>
+                        <page string="Notes">
+                            <field name="notes" nolabel="1" colspan="4"/>
+                        </page>
                     </notebook>
                 </form>
             </field>
