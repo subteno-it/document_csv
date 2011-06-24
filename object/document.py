@@ -201,6 +201,7 @@ class import_list_line(osv.osv):
             context = {}
 
         result = {}
+        domain = {}
         if not field_id:
             result['model_relation_id'] = False
             result['field_relation_id'] = False
@@ -211,10 +212,12 @@ class import_list_line(osv.osv):
                 if res_ids:
                     result['model_relation_id'] = res_ids[0]
                     result['field_relation_id'] = False
+                    domain['field_relation_id'] = [('model_id', '=', res_ids[0])]
             else:
                 result['model_relation_id'] = False
                 result['field_relation_id'] = False
-        return {'value': result}
+
+        return {'value': result, 'domain': domain}
 
 import_list_line()
 

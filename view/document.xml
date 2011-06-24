@@ -138,7 +138,7 @@
                                             <field name="field_id" domain="[('model_id','=', parent.model_id)]"
                                                 context="{'import': True}" required="1"
                                                 on_change="onchange_model_field(field_id)"/>
-                                            <field name="model_relation_id" readonly="1"/>
+                                            <field name="model_relation_id" attrs="{'readonly': [('field_id.ttype','not in', ('many2one','one2many','many2many'))]}"/>
                                             <field name="field_relation_id" attrs="{'readonly': [('model_relation_id','=', False)]}"/>
                                             <field name="relation"/>
                                             <field name="refkey"/>
@@ -153,7 +153,7 @@
                                                     <field name="field_id" domain="[('model_id','=', parent.model_id)]"
                                                         context="{'import': True}" required="1"
                                                         on_change="onchange_model_field(field_id)"/>
-                                                    <field name="model_relation_id" readonly="1"/>
+                                                    <field name="model_relation_id" attrs="{'readonly': [('field_id.ttype','not in', ('many2one','one2many','many2many'))]}"/>
                                                     <field name="field_relation_id" attrs="{'readonly': [('model_relation_id','=', False)]}"/>
                                                     <field name="relation"/>
                                                 </group>
