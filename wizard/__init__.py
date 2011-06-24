@@ -21,15 +21,9 @@
 #
 ##############################################################################
 
-try:
-    import yaml
-except ImportError:
-    import netsvc
-    logger = netsvc.Logger()
-    logger.notifyChannel('init', netsvc.LOG_DEBUG, 'module document_csv: missing python yaml module')
-
 import export_yml
 import import_yml
 import launch
+import read_csv
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

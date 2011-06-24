@@ -27,9 +27,7 @@
     'version': '1.4.1',
     'category': 'Document',
     'description': """
-    This module can import CSV file from the DMS
-    - Put with FTP client in the directory
-    - The import start automaticaly after full transfert
+    This module can import CSV file and easily than GTK Client
     """,
     'author': 'SYLEAM',
     'depends': [
@@ -49,6 +47,7 @@
         'view/document.xml',
         #'view/export.xml',
         'wizard/launch_view.xml',
+        'wizard/read_csv_view.xml',
     ],
     'demo_xml': [
         'demo/document.xml',

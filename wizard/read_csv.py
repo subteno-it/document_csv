@@ -24,45 +24,57 @@
 
 from osv import osv
 from osv import fields
+import base64
+import csv
 
-class LaunchImport(osv.osv_memory):
-    _name = 'wizard.launch.import.csv'
-    _description = 'Interface to launch CSV import'
-    _rec_name = 'import_list'
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 
-    def _import_list(self, cr, uid, context=None):
-        implist_obj = self.pool.get('document.import.list')
-        doc_ids = implist_obj.search(cr, uid, [('disable', '=', False)])
-        if doc_ids:
-            return [(x.id, x.name) for x in implist_obj.browse(cr, uid, doc_ids, context=context)]
-        return []
+
+class ReadCsv(osv.osv_memory):
+    _name = 'wizard.read.csv.file'
+    _description = 'Read the CSV header and import it on the current structure'
+    _rec_name = 'import_file'
 
     _columns = {
-        'import_list': fields.selection(_import_list, 'List', help='List of available import structure', required=True),
         'import_file': fields.binary('Filename', required=True),
-        'email_result': fields.char('Email', size=256, help='Email to send notification when import is finished'),
     }
 
-    def default_get(self, cr, uid, fields_list, context=None):
+    def read_header(self, cr, uid, ids, context=None):
         """
-        Retrieve email for this user
+        read the CSV header, and insert into the current structure
         """
-        if context is None:
-            context = {}
-
-        res = super(LaunchImport, self).default_get(cr, uid, fields_list, context=context)
-        res['email_result'] = self.pool.get('res.users').browse(cr, uid, uid, context=context).user_email or ''
-        return res
-        
-
-    def launch_import(self, cr, uid, ids, context=None):
-        """
-        Save file, and execute importation
-        """
+        print 'active_id: %s' % context.get('active_id', 0)
+        implist_obj = self.pool.get('document.import.list')
+        implist = implist_obj.browse(cr, uid, context.get('active_id'), context=context)
         cur = self.browse(cr, uid, ids[0], context=context)
-        self.pool.get('ir.attachment').import_csv(cr, uid, cur.import_list, cur.import_file, cur.email_result, context=context)
+        fpcsv = StringIO(base64.decodestring(cur.import_file))
+        fpcsv.seek(0)
+
+        sep = chr(ord(implist.csv_sep[0]))
+        esc = implist.csv_sep and chr(ord(implist.csv_esc[0])) or None
+
+        try:
+            csvfile = csv.reader(base64.decodestring(cur.import_file).splitlines(), delimiter=sep, quotechar=esc)
+            res = []
+            for c in csvfile:
+                args = {'line_ids': [(0, 0, {'name': x}) for x in c]}
+                break
+
+            print args
+            implist_obj.write(cr, uid, [context.get('active_id')], args, context=context)
+
+        except csv.Error, e:
+            print 'csvError: %s' % str(e)
+        except Exception, e:
+            print 'Exception: %s' % str(e)
+        finally:
+            fpcsv.close()
+
         return {'type': 'ir.actions.act_window_close'}
 
-LaunchImport()
+ReadCsv()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
