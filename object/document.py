@@ -180,7 +180,9 @@ class import_list_line(osv.osv):
     _columns = {
         'list_id': fields.many2one('document.import.list', 'Line', required=True, ondelete='cascade'),
         'name': fields.char('Field name', size=128, required=True),
-        'field_id': fields.many2one('ir.model.fields', 'Field', required=True),
+        'field_id': fields.many2one('ir.model.fields', 'Field'),
+        'model_relation_id': fields.many2one('ir.model', 'Relation Model'),
+        'field_relation_id': fields.many2one('ir.model.fields', 'Relation Field'),
         'relation': fields.selection([('', ''), ('id', 'ID'), ('db_id', 'DB ID'), ('search', 'Search')], 'Field relation', help='Search use name_search to match the record'),
         'create': fields.boolean('Create entry', help="If check, if entry doesn't exist, it must be created"),
         'refkey': fields.boolean('Reference Key', help='If check, this key is equal to ID in manual import'),
@@ -189,6 +191,30 @@ class import_list_line(osv.osv):
     _defaults = {
         'relation': lambda *a: '',
     }
+
+    # When select field is a relation, force domain for related field
+    def onchange_model_field(self, cr, uid, ids, field_id, context=None):
+        """
+        Check if field is a relation (many2one, one2many many2many)
+        """
+        if context is None:
+            context = {}
+
+        result = {}
+        if not field_id:
+            result['model_relation_id'] = False
+            result['field_relation_id'] = False
+        else:
+            field_obj = self.pool.get('ir.model.fields').browse(cr, uid, field_id, context=context)
+            if field_obj.ttype in ('many2one', 'one2many', 'many2many'):
+                res_ids = self.pool.get('ir.model').search(cr, uid, [('model', '=', field_obj.relation)], context=context)
+                if res_ids:
+                    result['model_relation_id'] = res_ids[0]
+                    result['field_relation_id'] = False
+            else:
+                result['model_relation_id'] = False
+                result['field_relation_id'] = False
+        return {'value': result}
 
 import_list_line()
 
@@ -248,13 +274,13 @@ class ir_attachment(osv.osv):
                 'ref': l.relation,
             }
             fld.append(args)
-            if l.refkey:
+            if l.refkey and l.field_id.ttype not in ('many2one', 'one2many', 'many2many'):
                 uniq_key = l.name
 
         # Compose the header
         header = []
         rej_header = []
-        if uniq_key:
+        if uniq_key and l.field_id.ttype not in ('many2one', 'one2many', 'many2many'):
             header.append(u'id')
         for h in fld:
             rej_header.append(h['name'])

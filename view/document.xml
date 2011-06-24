@@ -114,8 +114,8 @@
                         <separator string="General" colspan="6"/>
                         <field name="name" select="1"/>
                         <field name="model_id" select="1"/>
-                        <field name="ctx" on_change="onchange_context(ctx)" colspan="4"/>
                         <field name="disable" select="2"/>
+                        <field name="ctx" on_change="onchange_context(ctx)" colspan="6"/>
                     </group>
                     <notebook colspan="4">
                         <page string="General">
@@ -129,20 +129,35 @@
                                     <field name="format_date" colspan="4" widget="selection"/>
                                     <field name="format_time" colspan="4" widget="selection"/>
                                     <field name="format_datetime" colspan="4" widget="selection"/>
+                                    <button string="Read CSV Header" type="action" name="%(document_csv.action_wizard_read_csv_file_view)d" colspan="4"/>
                                 </group>
                                 <group colspan="4">
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
                                         <tree string="Columns" editable="bottom">
                                             <field name="name"/>
-                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]" context="{'import': True}"/>
+                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]"
+                                                context="{'import': True}" required="1"
+                                                on_change="onchange_model_field(field_id)"/>
+                                            <field name="model_relation_id" readonly="1"/>
+                                            <field name="field_relation_id" attrs="{'readonly': [('model_relation_id','=', False)]}"/>
                                             <field name="relation"/>
                                             <field name="refkey"/>
                                         </tree>
                                         <form string="Columns">
-                                            <field name="name"/>
-                                            <field name="field_id" domain="[('model_id','=', parent.model_id)]" context="{'import': True}"/>
-                                            <field name="relation"/>
-                                            <field name="refkey"/>
+                                            <group colspan="4">
+                                                <group colspan="2" col="2">
+                                                    <field name="name"/>
+                                                    <field name="refkey"/>
+                                                </group>
+                                                <group colspan="2" col="2">
+                                                    <field name="field_id" domain="[('model_id','=', parent.model_id)]"
+                                                        context="{'import': True}" required="1"
+                                                        on_change="onchange_model_field(field_id)"/>
+                                                    <field name="model_relation_id" readonly="1"/>
+                                                    <field name="field_relation_id" attrs="{'readonly': [('model_relation_id','=', False)]}"/>
+                                                    <field name="relation"/>
+                                                </group>
+                                            </group>
                                         </form>
                                     </field>
                                 </group>
