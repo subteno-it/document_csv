@@ -121,7 +121,9 @@
                         <page string="General">
                             <group colspan="4" col="8">
                                 <group colspan="2" col="2">
+                                    <separator string="Actions" colspan="2"/>
                                     <button string="Read CSV Header" type="action" name="%(document_csv.action_wizard_read_csv_file_view)d" colspan="2"/>
+                                    <button string="Export structure" type="action" name="%(document_csv.document_csv_export_wizard)d" colspan="2"/>
                                     <separator string="Import file information" colspan="2"/>
                                     <field name="csv_sep"/>
                                     <field name="csv_esc"/>

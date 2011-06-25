@@ -26,6 +26,7 @@
         <wizard id="document_csv_export_wizard"
             name="document_csv.export"
             model="document.import.list"
+            menu="False"
             string="Export structure"/>
 
         <wizard id='document_csv_import_wizard'
