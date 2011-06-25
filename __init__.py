@@ -21,7 +21,8 @@
 #
 ##############################################################################
 
-import object
+import document
+import ir_model
 import report
 import wizard
 
