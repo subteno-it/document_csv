@@ -56,9 +56,8 @@ class ir_attachment(osv.osv):
         if context is None:
             context = {}
 
-        #print 'content: %s' % cfp.getvalue()
-
         cr = pooler.get_db(dbname).cursor()
+        res = False
 
         # the file are store successfully, we can
         # for each file import, check if there insert in
@@ -79,15 +78,15 @@ class ir_attachment(osv.osv):
             logfp.write(message + '\n')
             return message
 
-        #model = imp_data.model_id.model
-
         # Read all field name in the list
         uniq_key = False
+        rel_uniq_key = {}
         fld = []
         for l in imp_data.line_ids:
             args = {
                 'name': l.name,
                 'field': l.field_id.name,
+                'rel_field': l .field_relation_id.name,
                 'type': l.field_id.ttype,
                 'relation': l.field_id.relation,
                 'key': l.refkey,
@@ -96,27 +95,38 @@ class ir_attachment(osv.osv):
             fld.append(args)
             if l.refkey and l.field_id.ttype not in ('many2one', 'one2many', 'many2many'):
                 uniq_key = l.name
+            elif l.refkey and l.field_id.ttype in ('many2one', 'one2many', 'many2many'):
+                if not rel_uniq_key.get(l.field_id.name):
+                    rel_uniq_key[l.field_id.name] = []
+                rel_uniq_key[l.field_id.name].append(l.name)
 
         # Compose the header
         header = []
         rej_header = []
-        if uniq_key and l.field_id.ttype not in ('many2one', 'one2many', 'many2many'):
+        if uniq_key:
             header.append(u'id')
+        if rel_uniq_key:
+            for x in rel_uniq_key:
+                header.append('%s/id' % x)
+
         for h in fld:
             rej_header.append(h['name'])
             if h['type'] not in ('many2one', 'one2many', 'many2many'):
                 header.append(h['field'])
             else:
-                if h['ref'] in ('id', 'db_id'):
+                if h['rel_field']:
+                    header.append('%s/%s' % (h['field'], h['rel_field']))
+                elif h['ref'] in ('id', 'db_id'):
                     header.append('%s:%s' % (h['field'], h['ref']))
                 else:
                     header.append(h['field'])
 
-        _logger.debug('module document_csv: ' + log_compose('Object: %s' % imp_data.model_id.model))
-        _logger.debug('module document_csv: ' + log_compose('Context: %r' % context))
+        _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Object', imp_data.model_id.model)))
+        _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Context', context)))
         _logger.debug('module document_csv: ' + log_compose('Columns header original : %s' % ', '.join(rej_header)))
         _logger.debug('module document_csv: ' + log_compose('Columns header translate: %s' % ', '.join(header)))
-        _logger.debug('module document_csv: ' + log_compose('Unique key (XML id): %r' % uniq_key))
+        _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Unique key (XML id)', uniq_key)))
+        _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Send report to', email_to)))
 
         # Compose the line from the csv import
         lines = []
@@ -130,15 +140,24 @@ class ir_attachment(osv.osv):
             esc = chr(ord(imp_data.csv_esc[0]))
             _logger.debug('module document_csv: ' + log_compose('Escape: %s ' % imp_data.csv_esc))
 
+        error = False
         integ = True
         try:
             _logger.debug('module document_csv: ' + log_compose('Read the CSV file'))
+            _logger.debug('module document_csv: header: %r ***(%d)***' % (header, len(header)))
             csvfile = csv.DictReader(cfp, delimiter=sep, quotechar=esc)
             for c in csvfile:
                 tmpline = []
                 rejline = []
                 if uniq_key:
                     tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.', '_'), str(c[uniq_key])))
+                if rel_uniq_key:
+                    for x in rel_uniq_key:
+                        res = '%s_' % x
+                        for z in rel_uniq_key[x]:
+                            res += str(c[z])
+                        tmpline.append(res)
+
                 for f in fld:
                     fld_name = c[f['name']]
                     if f['type'] in ('many2one', 'one2many', 'many2many'):
@@ -147,7 +166,7 @@ class ir_attachment(osv.osv):
                                 fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name']])
                     tmpline.append(fld_name)
                     rejline.append(c[f['name']])
-                _logger.debug('module document_csv: line: %r' % tmpline)
+                _logger.debug('module document_csv: line: %r ***(%d)***' % (tmpline, len(tmpline)))
                 lines.append(tmpline)
                 rej_lines.append(rejline)
         except csv.Error, e:
@@ -276,23 +295,22 @@ class ir_attachment(osv.osv):
         if not self.create(cr, uid, log_args):
             _logger.error('module document_csv: impossible to create the log file!')
 
-        if imp_data.err_mail:
+        res_email = email_to and [email_to] or imp_data.err_mail
+        if res_email:
             email_from = imp_data.mail_from
             if not email_from:
                 email_from = config['email_from']
             legend = {}
             if not isinstance(res, bool) and res[0] >= 0:
                 legend['count'] = res[0]
-                email_to = imp_data.mail_cc
                 subject = imp_data.mail_subject % legend
                 body = imp_data.mail_body % legend
             else:
-                email_to = imp_data.mail_cc_err
                 subject = imp_data.mail_subject_err % legend
                 body = imp_data.mail_body_err % {'error': error}
 
             if email_from and email_to:
-                email(email_from, email_to, subject, body)
+                email(email_from, res_email, subject, body)
                 _logger.debug('module document_csv: Sending mail [OK]')
             else:
                 _logger.warning('module document_csv: Sending mail [FAIL]')
