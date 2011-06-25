@@ -23,6 +23,8 @@
 
 import document
 import ir_model
+import ir_attachment
+
 import report
 import wizard
 
