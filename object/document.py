@@ -65,6 +65,7 @@ import_format()
 
 # TODO retrieve list of encoding from locale library
 _encoding = [
+    ('ascii', 'ASCII'),
     ('utf-8', 'UTF 8'),
     ('cp1252', 'CP 1252 Windows'),
     ('cp850', 'CP 850 IBM'),
@@ -113,6 +114,7 @@ class import_list(osv.osv):
         'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
         'csv_sep': fields.char('Separator', size=1, required=True),
         'csv_esc': fields.char('Escape', size=1),
+        'lang_id': fields.many2one('res.lang', 'Language', help='Language use in this import, to convert correctly date and float'),
         'encoding': fields.selection(_encoding, 'Encoding'),
         'line_ids': fields.one2many('document.import.list.line', 'list_id', 'Lines'),
         'backup_filename': fields.char('Backup filename', size=128, required=True, help='Indique the name of the file to backup, see legend at bottom'),

@@ -119,19 +119,20 @@
                     </group>
                     <notebook colspan="4">
                         <page string="General">
-                            <group colspan="4" col="6">
-                                <group colspan="2">
-                                    <separator string="Import file information" colspan="4"/>
-                                    <field name="csv_sep" colspan="4"/>
-                                    <field name="csv_esc" colspan="4"/>
-                                    <field name="encoding" colspan="4"/>
-                                    <separator string="Format" colspan="4"/>
-                                    <field name="format_date" colspan="4" widget="selection"/>
-                                    <field name="format_time" colspan="4" widget="selection"/>
-                                    <field name="format_datetime" colspan="4" widget="selection"/>
-                                    <button string="Read CSV Header" type="action" name="%(document_csv.action_wizard_read_csv_file_view)d" colspan="4"/>
+                            <group colspan="4" col="8">
+                                <group colspan="2" col="2">
+                                    <button string="Read CSV Header" type="action" name="%(document_csv.action_wizard_read_csv_file_view)d" colspan="2"/>
+                                    <separator string="Import file information" colspan="2"/>
+                                    <field name="csv_sep"/>
+                                    <field name="csv_esc"/>
+                                    <field name="encoding"/>
+                                    <separator string="Format" colspan="2"/>
+                                    <field name="lang_id" widget="selection"/>
+                                    <field name="format_date" widget="selection"/>
+                                    <field name="format_time" widget="selection"/>
+                                    <field name="format_datetime" widget="selection"/>
                                 </group>
-                                <group colspan="4">
+                                <group colspan="6">
                                     <field name="line_ids" colspan="4" nolabel="1" height="400">
                                         <tree string="Columns" editable="bottom">
                                             <field name="name"/>
