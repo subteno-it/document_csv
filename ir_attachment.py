@@ -79,7 +79,7 @@ class ir_attachment(osv.osv):
             return message
 
         # Read all field name in the list
-        uniq_key = False
+        uniq_key = []
         rel_uniq_key = {}
         fld = []
         for l in imp_data.line_ids:
@@ -94,7 +94,7 @@ class ir_attachment(osv.osv):
             }
             fld.append(args)
             if l.refkey and l.field_id.ttype not in ('many2one', 'one2many', 'many2many'):
-                uniq_key = l.name
+                uniq_key.append(l.name)
             elif l.refkey and l.field_id.ttype in ('many2one', 'one2many', 'many2many'):
                 if not rel_uniq_key.get(l.field_id.name):
                     rel_uniq_key[l.field_id.name] = []
@@ -150,7 +150,11 @@ class ir_attachment(osv.osv):
                 tmpline = []
                 rejline = []
                 if uniq_key:
-                    tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.', '_'), str(c[uniq_key])))
+                    res = '%s_' % imp_data.model_id.model.replace('.', '_')
+                    for x in uniq_key:
+                        res += str(c[x])
+                    tmpline.append(res)
+
                 if rel_uniq_key:
                     for x in rel_uniq_key:
                         res = '%s_' % x
