@@ -43,11 +43,11 @@
         #'data/sequence.xml',
         'view/menu.xml',
         'wizard/wizard.xml',
+        'wizard/launch_view.xml',
+        'wizard/read_csv_view.xml',
         #'report/report.xml',
         'view/document.xml',
         #'view/export.xml',
-        'wizard/launch_view.xml',
-        'wizard/read_csv_view.xml',
     ],
     'demo_xml': [
         'demo/document.xml',
