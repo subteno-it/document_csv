@@ -107,7 +107,7 @@ class ir_attachment(osv.osv):
             header.append(u'id')
         if rel_uniq_key:
             for x in rel_uniq_key:
-                header.append('%s/id' % x)
+                header.append('%s:id' % x)
 
         for h in fld:
             rej_header.append(h['name'])
