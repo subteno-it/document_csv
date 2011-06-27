@@ -150,14 +150,14 @@ class ir_attachment(osv.osv):
                 tmpline = []
                 rejline = []
                 if uniq_key:
-                    res = '%s_' % imp_data.model_id.model.replace('.', '_')
+                    res = ''
                     for x in uniq_key:
                         res += str(c[x])
                     tmpline.append(res)
 
                 if rel_uniq_key:
                     for x in rel_uniq_key:
-                        res = '%s_' % x
+                        res = ''
                         for z in rel_uniq_key[x]:
                             res += str(c[z])
                         tmpline.append(res)
