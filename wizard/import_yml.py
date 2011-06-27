@@ -23,12 +23,13 @@
 
 import wizard
 import pooler
-from cStringIO import StringIO
 import base64
+import yaml
 from tools.translate import _
 
 init_form = """<?xml version="1.0" ?>
 <form string="Import CSV structure">
+  <field name="name" colspan="4"/>
   <separator string="Select file to import" colspan="4"/>
   <field name="filename" colspan="4" width="350"/>
 </form>
@@ -36,19 +37,14 @@ init_form = """<?xml version="1.0" ?>
 
 init_fields = {
     'filename': {'string':'Select File', 'type':'binary','required':True,'filters':'*.yml'},
+    'name': {'string': 'Name of the new import', 'type': 'char', 'size': 64, 'required': False},
 }
-
-def _check_yaml(self, cr, uid, data, context):
-    try:
-        import yaml
-    except ImportError:
-        raise wizard.except_wizard(_('Error'),_('Python Yaml Module not found, see description module'))
-    return {}
 
 
 def _import(self, cr, uid, data, context):
-    if not context: context = {}
-    import yaml
+    if context is None:
+        context = {}
+    
     pool = pooler.get_pool(cr.dbname)
     model_obj = pool.get('ir.model')
     fld_obj = pool.get('ir.model.fields')
@@ -66,30 +62,10 @@ def _import(self, cr, uid, data, context):
         raise wizard.except_wizard(_('Error'), 
                                    _('No model name %s found') % st['object'])
     mod_id = mod_ids[0]
-
-    # Search the directory
-    dir_ids = dir_obj.search(cr, uid, [('name','=',st['directory'])])
-    if not dir_ids:
-        # We create it, with source directory parent
-        dat_id = dat_obj._get_id(cr, uid, 'document_csv', 'dir_root_import_source')
-        if not dat_id:
-            raise wizard.except_wizard(_('Error'), _('Source directory reference not found'))
-        s_id = dat_obj.read(cr, uid, dat_id, ['res_id'])['res_id']
-        dir_args = {
-            'name': st['directory'],
-            'parent_id': s_id,
-            'user_id': 1,
-            'type': 'directory',
-        }
-        dir_ids = [dir_obj.create(cr, uid, dir_args, context=context)]
-    dir_id = dir_ids[0]
-    #raise wizard.except_wizard(_('Cool'), _('Ok'))
-
     imp = {
-        'name': st['name'],
+        'name': data['form']['name'] or st['name'],
         'ctx': st['context'],
         'model_id': mod_id,
-        'directory_id': dir_id,
         'csv_sep': st.get('separator', ';'),
         'csv_esc': st.get('escape', '"'),
         'encoding': st.get('encoding', 'utf-8'),
@@ -100,20 +76,35 @@ def _import(self, cr, uid, data, context):
         imp['reject_filename'] = st.get('reject_filename', False)
         imp['backup_filename'] = st.get('backup_filename', False)
 
+    if st.get('version', '0.0') == '1.2':
+        imp['notes'] = st.get('notes', False)
+        imp['lang'] = st.get('lang', 'en_US')
+
     lines_ids = []
     for i in st['lines']:
         # The field id associate to the name
         fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id),('name', '=', i['field'])])
         if not fld_ids:
             raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['field'])
-        fld_id = fld_ids[0]
 
         l = {
             'name': i['name'],
-            'field_id': fld_id,
+            'field_id': fld_ids[0],
             'relation': i.get('relation', False),
             'refkey': i.get('refkey', False),
         }
+        if i.get('model') and i.get('model') not in ('None', 'False'):
+            mod_ids = model_obj.search(cr, uid, [('model','=', i['model'])])
+            if not mod_ids:
+                raise wizard.except_wizard(_('Error'), 
+                                   _('No model name %s found') % i['model'])
+
+            l['model_relation_id'] = mod_ids[0]
+        if i.get('model_field') and i.get('model_field') not in ('None', 'False'):
+            fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_ids[0]),('name', '=', i['model_field'])])
+            if not fld_ids:
+                raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['model_field'])
+            l['field_relation_id'] = fld_ids[0]
 
         lines_ids.append((0, 0, l))
     imp['line_ids'] = lines_ids
@@ -133,7 +124,7 @@ class import_yaml(wizard.interface):
 
     states = {
         'init' : {
-            'actions': [_check_yaml],
+            'actions': [],
             'result': {
                 'type': 'form',
                 'arch': init_form,

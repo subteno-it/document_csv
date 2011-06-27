@@ -28,7 +28,7 @@ import base64
 from tools.translate import _
 
 init_form = """<?xml version="1.0" ?>
-<form string="Export structure">
+<form string="Export file structure">
   <separator string="The export file is available, save it to a local drive" colspan="4"/>
   <field name="name" invisible="1"/>
   <field name="filename" colspan="4" width="350" fieldname="name" readonly="1"/>
@@ -49,9 +49,9 @@ def _init(self, cr, uid, data, context):
     pool = pooler.get_pool(cr.dbname)
     doc_obj = pool.get('document.import.list')
     doc = doc_obj.browse(cr, uid, data['id'], context=context)
-    yml_file = '%s.yml' % doc.name.lower().replace(' ','_')
+    yml_file = '%s.yml' % doc.name.lower().replace(' ','_').replace('-','')
     content = {
-        'version': '1.1',
+        'version': '1.2',
         'name': doc.name,
         'object': doc.model_id.model,
         'context': doc.ctx,
@@ -62,19 +62,23 @@ def _init(self, cr, uid, data, context):
         'log_filename': doc.log_filename,
         'reject_filename': doc.reject_filename,
         'backup_filename': doc.backup_filename,
+        'lang': doc.lang_id.code or 'en_US',
+        'notes': doc.notes or '',
     }
     lines = []
     for l in doc.line_ids:
         line = {}
         line['name'] = l.name
         line['field'] = l.field_id.name
-        if l.field_id.ttype in ('many2one','many2many'):
-            line['relation'] = l.relation
+        if l.field_id.ttype in ('many2one', 'one2many', 'many2many'):
+            line['model'] = l.model_relation_id.model and str(l.model_relation_id.model) or False
+            line['model_field'] = l.field_relation_id.name and str(l.field_relation_id.name) or False
+            line['relation'] = l.relation and str(l.relation) or False
         line['refkey'] = l.refkey
         lines.append(line)
+
     content['lines'] = lines
     buf = StringIO()
-    #print yaml.dump(content, default_flow_style=False)
     buf.write(yaml.dump(content, encoding='utf-8', default_flow_style=False))
     out = base64.encodestring(buf.getvalue())
     buf.close()
