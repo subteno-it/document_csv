@@ -288,7 +288,8 @@ class ir_attachment(osv.osv):
 
         ## save the log file
         log_name = time.strftime(imp_data.log_filename)
-        log_enc = base64.encodestring(logfp.getvalue())
+        log_content = logfp.getvalue()
+        log_enc = base64.encodestring(log_content)
         logfp.close()
         log_args = {
             'name': log_name,
@@ -301,6 +302,7 @@ class ir_attachment(osv.osv):
 
         res_email = email_to and [email_to] or imp_data.err_mail
         if res_email:
+            log_attachment = [(log_name, log_content)]
             email_from = imp_data.mail_from
             if not email_from:
                 email_from = config['email_from']
@@ -314,7 +316,7 @@ class ir_attachment(osv.osv):
                 body = imp_data.mail_body_err and (imp_data.mail_body_err % {'error': error}) or 'No body'
 
             if email_from and email_to:
-                email(email_from, res_email, subject, body)
+                email(email_from, res_email, subject, body, attach=log_attachment)
                 _logger.debug('module document_csv: Sending mail [OK]')
             else:
                 _logger.warning('module document_csv: Sending mail [FAIL]')
