@@ -307,11 +307,11 @@ class ir_attachment(osv.osv):
             legend = {}
             if not isinstance(res, bool) and res[0] >= 0:
                 legend['count'] = res[0]
-                subject = imp_data.mail_subject % legend
-                body = imp_data.mail_body % legend
+                subject = imp_data.mail_subject and (imp_data.mail_subject % legend) or 'No subject'
+                body = imp_data.mail_body and (imp_data.mail_body % legend) or 'No body'
             else:
-                subject = imp_data.mail_subject_err % legend
-                body = imp_data.mail_body_err % {'error': error}
+                subject = imp_data.mail_subject_err and (imp_data.mail_subject_err % legend) or 'No subject'
+                body = imp_data.mail_body_err and (imp_data.mail_body_err % {'error': error}) or 'No body'
 
             if email_from and email_to:
                 email(email_from, res_email, subject, body)
