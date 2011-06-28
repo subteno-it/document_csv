@@ -79,6 +79,14 @@ def _import(self, cr, uid, data, context):
     if st.get('version', '0.0') == '1.2':
         imp['notes'] = st.get('notes', False)
         imp['lang'] = st.get('lang', 'en_US')
+        imp['err_mail'] = st.get('send_mail', False)
+        imp['mail_from'] = st.get('mail_from', False)
+        imp['mail_cc'] = st.get('mail_cc', False)
+        imp['mail_subject'] = st.get('mail_subject', False)
+        imp['mail_body'] = st.get('mail_body', False)
+        imp['mail_cc_err'] = st.get('mail_cc_err', False)
+        imp['mail_subject_err'] = st.get('mail_subject_err', False)
+        imp['mail_body_err'] = st.get('mail_body_err', False)
 
     lines_ids = []
     for i in st['lines']:

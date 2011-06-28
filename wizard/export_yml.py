@@ -64,6 +64,14 @@ def _init(self, cr, uid, data, context):
         'backup_filename': doc.backup_filename,
         'lang': doc.lang_id.code or 'en_US',
         'notes': doc.notes or '',
+        'send_mail': doc.err_mail,
+        'mail_from': doc.mail_from,
+        'mail_cc': doc.mail_cc,
+        'mail_subject': doc.mail_subject,
+        'mail_body': doc.mail_body,
+        'mail_cc_err': doc.mail_cc_err,
+        'mail_subject_err': doc.mail_subject_err,
+        'mail_body_err': doc.mail_body_err,
     }
     lines = []
     for l in doc.line_ids:
