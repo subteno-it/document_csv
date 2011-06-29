@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    document_csv module for OpenERP, Import structure in CSV
-#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>) 
+#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>)
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of document_csv
@@ -24,6 +24,7 @@
 
 from osv import osv
 from osv import fields
+
 
 class LaunchImport(osv.osv_memory):
     _name = 'wizard.launch.import.csv'
@@ -53,7 +54,6 @@ class LaunchImport(osv.osv_memory):
         res = super(LaunchImport, self).default_get(cr, uid, fields_list, context=context)
         res['email_result'] = self.pool.get('res.users').browse(cr, uid, uid, context=context).user_email or ''
         return res
-        
 
     def launch_import(self, cr, uid, ids, context=None):
         """

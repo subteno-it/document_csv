@@ -37,19 +37,22 @@ init_form = """<?xml version="1.0" ?>
 
 init_fields = {
     'name': {'string': 'File name', 'type': 'char', 'size': 128},
-    'filename': {'string':'Select a filename, and save it', 'type':'binary','required':True,'filters':'*.yml'},
+    'filename': {'string': 'Select a filename, and save it', 'type': 'binary', 'required': True, 'filters': '*.yml'},
 }
 
+
 def _init(self, cr, uid, data, context):
-    if not context: context = {}
+    if context is None:
+        context = {}
+
     try:
         import yaml
     except ImportError:
-        raise wizard.except_wizard(_('Error'),_('Python Yaml Module not found, see description module'))
+        raise wizard.except_wizard(_('Error'), _('Python Yaml Module not found, see description module'))
     pool = pooler.get_pool(cr.dbname)
     doc_obj = pool.get('document.import.list')
     doc = doc_obj.browse(cr, uid, data['id'], context=context)
-    yml_file = '%s.yml' % doc.name.lower().replace(' ','_').replace('-','')
+    yml_file = '%s.yml' % doc.name.lower().replace(' ', '_').replace('-', '')
     content = {
         'version': '1.2',
         'name': doc.name,
@@ -92,16 +95,17 @@ def _init(self, cr, uid, data, context):
     buf.close()
     return {'filename': out, 'name': yml_file}
 
+
 class export_yaml(wizard.interface):
 
     states = {
-        'init' : {
+        'init': {
             'actions': [_init],
             'result': {
                 'type': 'form',
                 'arch': init_form,
                 'fields': init_fields,
-                'state': [('end','Cancel','gtk-cancel'), ('valid', 'OK', 'gtk-ok', True)],
+                'state': [('end', 'Cancel', 'gtk-cancel'), ('valid', 'OK', 'gtk-ok', True)],
             }
         },
         'valid': {

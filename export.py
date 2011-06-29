@@ -33,6 +33,7 @@ from StringIO import StringIO
 from tools import ustr
 from tools.translate import _
 
+
 class export_csv(osv.osv):
     """
     CSV File export description
@@ -62,7 +63,9 @@ class export_csv(osv.osv):
     }
 
     def onchange_domain(self, cr, uid, ids, val, context=None):
-        if not context: context = {}
+        if context is None:
+            context = {}
+
         warning = {}
         warning['title'] = _('Error')
         warning['message'] = _('Bad domain value')
@@ -81,7 +84,9 @@ class export_csv(osv.osv):
         return {'warning': False}
 
     def onchange_context(self, cr, uid, ids, val, context=None):
-        if not context: context = {}
+        if context is None:
+            context = {}
+
         warning = {}
         warning['title'] = _('Error')
         warning['message'] = _('Bad context value')
@@ -100,6 +105,7 @@ class export_csv(osv.osv):
         return {'warning': False}
 
 export_csv()
+
 
 class export_csv_line(osv.osv):
     """
@@ -121,6 +127,7 @@ class export_csv_line(osv.osv):
 
 export_csv_line()
 
+
 class document_directory_content(osv.osv):
     _inherit = 'document.directory.content'
     _columns = {
@@ -131,7 +138,9 @@ class document_directory_content(osv.osv):
         """
         This function generate the CSV file
         """
-        if not context: context = node.context
+        if context is None:
+            context = node.context
+
         obj_export = node.content.csv_export_def
         ctx = context.copy()
         # If lang is not set, retrieve it form user form
@@ -166,14 +175,14 @@ class document_directory_content(osv.osv):
             if obj_export.id_use:
                 res_id = obj_imd.search(cr, uid, [('model', '=', obj_export.model_id.model), ('res_id', '=', obj.id)], context=context)
                 if res_id:
-                    res = obj_imd.read(cr, uid, res_id, ['module','name'], context=context)[0]
+                    res = obj_imd.read(cr, uid, res_id, ['module', 'name'], context=context)[0]
                     if not res['module']:
                         all += '"%s"%s' % (res['name'], separator)
                     else:
                         all += '"%s.%s"%s' % (res['module'], res['name'], separator)
                 else:
                     if obj_export.id_emu:
-                        all += '"%s_%d"%s' % (obj_export.model_id.model.replace('.','_'), obj.id, separator)
+                        all += '"%s_%d"%s' % (obj_export.model_id.model.replace('.', '_'), obj.id, separator)
                     else:
                         all += '""%s' % separator
             for fld in obj_export.line_ids:
@@ -186,13 +195,13 @@ class document_directory_content(osv.osv):
                         value = ng[0][1]
 
                 res = ''
-                if ftype in ('char','text','selection','many2one'):
+                if ftype in ('char', 'text', 'selection', 'many2one'):
                     #if isinstance(value, (str,unicode)):
                     res = '"%s"' % (value or '')
                 elif ftype == 'date' and value:
-                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_FMT) ,time.strptime(value, '%Y-%m-%d'))
+                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_FMT), time.strptime(value, '%Y-%m-%d'))
                 elif ftype == 'datetime' and value:
-                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_T_FMT) ,time.strptime(value, '%Y-%m-%d %H:%M:%S'))
+                    res = '%s' % time.strftime(locale.nl_langinfo(locale.D_T_FMT), time.strptime(value, '%Y-%m-%d %H:%M:%S'))
                 else:
                     res = '%s' % (value or '')
 

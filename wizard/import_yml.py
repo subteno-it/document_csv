@@ -36,7 +36,7 @@ init_form = """<?xml version="1.0" ?>
 """
 
 init_fields = {
-    'filename': {'string':'Select File', 'type':'binary','required':True,'filters':'*.yml'},
+    'filename': {'string': 'Select File', 'type': 'binary', 'required': True, 'filters': '*.yml'},
     'name': {'string': 'Name of the new import', 'type': 'char', 'size': 64, 'required': False},
 }
 
@@ -44,7 +44,7 @@ init_fields = {
 def _import(self, cr, uid, data, context):
     if context is None:
         context = {}
-    
+
     pool = pooler.get_pool(cr.dbname)
     model_obj = pool.get('ir.model')
     fld_obj = pool.get('ir.model.fields')
@@ -59,10 +59,10 @@ def _import(self, cr, uid, data, context):
     st = yaml.load(content)
 
     # Search the model_id
-    mod_ids = model_obj.search(cr, uid, [('model','=', st['object'])])
+    mod_ids = model_obj.search(cr, uid, [('model', '=', st['object'])])
     if not mod_ids:
-        raise wizard.except_wizard(_('Error'), 
-                                   _('No model name %s found') % st['object'])
+        raise wizard.except_wizard(_('Error'),
+                _('No model name %s found') % st['object'])
     mod_id = mod_ids[0]
     imp = {
         'name': data['form']['name'] or st['name'],
@@ -93,7 +93,7 @@ def _import(self, cr, uid, data, context):
     lines_ids = []
     for i in st['lines']:
         # The field id associate to the name
-        fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id),('name', '=', i['field'])], context=context)
+        fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id), ('name', '=', i['field'])], context=context)
         if not fld_ids:
             raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['field'])
 
@@ -104,14 +104,14 @@ def _import(self, cr, uid, data, context):
             'refkey': i.get('refkey', False),
         }
         if i.get('model') and i.get('model') not in ('None', 'False'):
-            mod_ids = model_obj.search(cr, uid, [('model','=', i['model'])])
+            mod_ids = model_obj.search(cr, uid, [('model', '=', i['model'])])
             if not mod_ids:
-                raise wizard.except_wizard(_('Error'), 
+                raise wizard.except_wizard(_('Error'),
                                    _('No model name %s found') % i['model'])
 
             l['model_relation_id'] = mod_ids[0]
         if i.get('model_field') and i.get('model_field') not in ('None', 'False'):
-            fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_ids[0]),('name', '=', i['model_field'])])
+            fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_ids[0]), ('name', '=', i['model_field'])])
             if not fld_ids:
                 raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['model_field'])
             l['field_relation_id'] = fld_ids[0]
@@ -126,20 +126,20 @@ def _import(self, cr, uid, data, context):
     result = dat_obj._get_id(cr, uid, 'document_csv', 'action_document_import_list')
     id = dat_obj.read(cr, uid, result, ['res_id'])['res_id']
     result = act_obj.read(cr, uid, id)
-    result['domain'] ="[('id','in', ["+','.join(map(str, [imp_id]))+"])]"
+    result['domain'] = "[('id','in', [" + ','.join(map(str, [imp_id])) + "])]"
     return result
 
 
 class import_yaml(wizard.interface):
 
     states = {
-        'init' : {
+        'init': {
             'actions': [],
             'result': {
                 'type': 'form',
                 'arch': init_form,
                 'fields': init_fields,
-                'state': [('end','Cancel','gtk-cancel'), ('valid', 'OK', 'gtk-ok', True)],
+                'state': [('end', 'Cancel', 'gtk-cancel'), ('valid', 'OK', 'gtk-ok', True)],
             }
         },
         'valid': {

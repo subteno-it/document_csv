@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    document_csv module for OpenERP, module to import data from CSV source
-#    Copyright (C) 2009-2011 SYLEAM (<http://www.Syleam.fr>) 
+#    Copyright (C) 2009-2011 SYLEAM (<http://www.Syleam.fr>)
 #                  Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of document_csv
