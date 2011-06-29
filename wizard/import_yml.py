@@ -53,6 +53,8 @@ def _import(self, cr, uid, data, context):
     imp_obj = pool.get('document.import.list')
     act_obj = pool.get('ir.actions.act_window')
 
+    context['import'] = True
+
     content = base64.decodestring(data['form']['filename'])
     st = yaml.load(content)
 
@@ -91,7 +93,7 @@ def _import(self, cr, uid, data, context):
     lines_ids = []
     for i in st['lines']:
         # The field id associate to the name
-        fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id),('name', '=', i['field'])])
+        fld_ids = fld_obj.search(cr, uid, [('model_id', '=', mod_id),('name', '=', i['field'])], context=context)
         if not fld_ids:
             raise wizard.except_wizard(_('Error'), _('No field %s found in the object') % i['field'])
 
