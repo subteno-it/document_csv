@@ -70,13 +70,13 @@ def _import(self, cr, uid, data, context):
         'csv_esc': st.get('escape', '"'),
         'encoding': st.get('encoding', 'utf-8'),
     }
-    if st.get('version', '0.0') == '1.1':
+    if st.get('version', '0.0') >= '1.1':
         imp['err_reject'] = st.get('reject_all', False)
         imp['log_filename'] = st.get('log_filename', False)
         imp['reject_filename'] = st.get('reject_filename', False)
         imp['backup_filename'] = st.get('backup_filename', False)
 
-    if st.get('version', '0.0') == '1.2':
+    if st.get('version', '0.0') >= '1.2':
         imp['notes'] = st.get('notes', False)
         imp['lang'] = st.get('lang', 'en_US')
         imp['err_mail'] = st.get('send_mail', False)
