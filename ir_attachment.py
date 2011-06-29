@@ -179,7 +179,7 @@ class ir_attachment(osv.osv):
             error = 'csv Error, %r' % e
             integ = False
         except KeyError, k:
-            _logger.info('module document_csv: ' + log_compose('%r' % k))
+            _logger.info('module document_csv: ' + log_compose('ERROR: The columns "%s" cannot be found, check if no extra space around the column title' % k.args[0]))
             error = 'KeyError, %r' % k
             integ = False
         except UnicodeError:
