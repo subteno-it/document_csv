@@ -308,7 +308,7 @@ class ir_attachment(osv.osv):
             if not email_from:
                 email_from = config['email_from']
             legend = {}
-            if not isinstance(res, bool) and res[0] >= 0:
+            if (not isinstance(res, bool) and res[0] >= 0) and integ:
                 legend['count'] = res[0]
                 subject = imp_data.mail_subject and (imp_data.mail_subject % legend) or 'No subject'
                 body = imp_data.mail_body and (imp_data.mail_body % legend) or 'No body'
@@ -320,7 +320,7 @@ class ir_attachment(osv.osv):
                 email(email_from, res_email, subject, body, attach=log_attachment)
                 _logger.debug('module document_csv: Sending mail [OK]')
             else:
-                _logger.warning('module document_csv: Sending mail [FAIL]')
+                _logger.warning('module document_csv: Sending mail [FAIL], missing email "from" or "to"')
 
         # Add trace on the log, when file was integrate
         _logger.debug('module document_csv: end import new file '.ljust(80, '*'))
