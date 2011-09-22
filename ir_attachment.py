@@ -26,6 +26,7 @@ from osv import osv
 from tools import ustr
 from tools import email_send as email
 from tools import config
+import re
 import time
 import base64
 import csv
@@ -153,7 +154,7 @@ class ir_attachment(osv.osv):
                 if uniq_key:
                     res = ''
                     for x in uniq_key:
-                        res += str(c[x])
+                        res += str(re.sub('\W', '_', c[x].lower()))
                     tmpline.append(res)
 
                 if rel_uniq_key:
