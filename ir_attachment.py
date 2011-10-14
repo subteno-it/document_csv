@@ -102,6 +102,10 @@ class ir_attachment(osv.osv):
                     rel_uniq_key[l.field_id.name] = []
                 rel_uniq_key[l.field_id.name].append(l.name)
 
+        # If "key field" is filled, replace the uniq_key list
+        if imp_data.key_field_name:
+            uniq_key = [imp_data.key_field_name]
+
         # Compose the header
         header = []
         rej_header = []

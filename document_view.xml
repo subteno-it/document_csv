@@ -128,6 +128,7 @@
                                     <field name="csv_sep"/>
                                     <field name="csv_esc"/>
                                     <field name="encoding"/>
+                                    <field name="key_field_name"/>
                                     <separator string="Format" colspan="2"/>
                                     <field name="lang_id" widget="selection"/>
                                     <field name="format_date" widget="selection"/>

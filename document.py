@@ -123,6 +123,7 @@ class import_list(osv.osv):
         'format_time': fields.many2one('document.import.format', 'Time', domain="[('type','=','time')]", help='Select the time format on the csv file'),
         'format_datetime': fields.many2one('document.import.format', 'DateTime', domain="[('type','=','datetime')]", help='Select the datetime format on the csv file'),
         'notes': fields.text('Note', help='Add note for this import '),
+        'key_field_name': fields.char('Key column', size=64, help='The name of the column used as a key. If not filled, a key is generated from reference fields'),
     }
 
     _defaults = {
