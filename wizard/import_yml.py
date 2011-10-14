@@ -90,6 +90,9 @@ def _import(self, cr, uid, data, context):
         imp['mail_subject_err'] = st.get('mail_subject_err', False)
         imp['mail_body_err'] = st.get('mail_body_err', False)
 
+    if st.get('version', '0.0') >= '1.3':
+        imp['key_field_name'] = st.get('key_field_name', False)
+
     lines_ids = []
     for i in st['lines']:
         # The field id associate to the name

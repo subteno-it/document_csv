@@ -54,13 +54,14 @@ def _init(self, cr, uid, data, context):
     doc = doc_obj.browse(cr, uid, data['id'], context=context)
     yml_file = '%s.yml' % doc.name.lower().replace(' ', '_').replace('-', '')
     content = {
-        'version': '1.2',
+        'version': '1.3',
         'name': doc.name,
         'object': doc.model_id.model,
         'context': doc.ctx,
         'separator': doc.csv_sep,
         'escape': doc.csv_esc,
         'encoding': doc.encoding,
+        'key_field_name': doc.key_field_name,
         'reject_all': doc.err_reject,
         'log_filename': doc.log_filename,
         'reject_filename': doc.reject_filename,
