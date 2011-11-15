@@ -156,17 +156,17 @@ class ir_attachment(osv.osv):
                 tmpline = []
                 rejline = []
                 if uniq_key:
-                    res = ''
+                    res_tmp = ''
                     for x in uniq_key:
-                        res += str(re.sub('\W', '_', c[x].lower()))
-                    tmpline.append(res)
+                        res_tmp += str(re.sub('\W', '_', c[x].lower()))
+                    tmpline.append(res_tmp)
 
                 if rel_uniq_key:
                     for x in rel_uniq_key:
-                        res = ''
+                        res_tmp = ''
                         for z in rel_uniq_key[x]:
-                            res += str(c[z])
-                        tmpline.append(res)
+                            res_tmp += str(c[z])
+                        tmpline.append(res_tmp)
 
                 for f in fld:
                     fld_name = c[f['name']]
