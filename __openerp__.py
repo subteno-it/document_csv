@@ -30,6 +30,10 @@
     This module can import CSV file and easily than GTK Client
     """,
     'author': 'SYLEAM',
+    'website': 'http://www.syleam.fr/',
+    'images': [
+        'images/syleam.png',
+    ],
     'depends': [
         'document',
         'base_tools',
