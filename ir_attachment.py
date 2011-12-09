@@ -171,7 +171,7 @@ class ir_attachment(osv.osv):
                 for f in fld:
                     fld_name = c[f['name']]
                     if f['type'] in ('many2one', 'one2many', 'many2many'):
-                        if not c[f['name']].find('.') > 0:
+                        if not c[f['name']].find('.') >= 0:
                             if f['ref'] == 'id':
                                 fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name']])
                     tmpline.append(fld_name)
