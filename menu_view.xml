@@ -32,7 +32,7 @@
         <menuitem id="menu_document_import_configuration"
             sequence="30"
             name="Exchange Datas"
-            parent="base.menu_lunch_survey_root"/>
+            parent="base.menu_tools"/>
 
     </data>
 </openerp>

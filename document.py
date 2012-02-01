@@ -3,6 +3,8 @@
 #
 #    document_csv module for OpenERP
 #    Copyright (C) 2009-2011 SYLEAM (<http://www.syleam.fr>) Christophe CHAUVET
+#    Copyright (C) 2011 Camptocamp (http://www.camptocamp.com)
+#              Guewen Baconnier
 #
 #    This file is a part of document_csv
 #
@@ -46,7 +48,7 @@ class import_format(osv.osv):
         'type': fields.selection(type_list, 'Type', help='Select the type of the format'),
     }
     _defaults = {
-        'type': lambda *a: 'date',
+        'type': 'date',
     }
 
 import_format()
@@ -99,7 +101,7 @@ class import_list(osv.osv):
         'ctx': fields.char('Context', size=256, help='this part complete the original context'),
         'disable': fields.boolean('Disable', help='Check this, if you want to disable it'),
         'err_mail': fields.boolean('Send log by mail', help='The log file was send to all users of the groupes'),
-        'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error'),
+        'err_reject': fields.boolean('Reject all if error', help='Reject all lines if there is an error. You need to activate this flag if you import sub-items (like a BoM and its components) in the same file.'),
         'csv_sep': fields.char('Separator', size=1, required=True),
         'csv_esc': fields.char('Escape', size=1),
         'lang_id': fields.many2one('res.lang', 'Language', help='Language use in this import, to convert correctly date and float'),
@@ -127,14 +129,14 @@ class import_list(osv.osv):
     }
 
     _defaults = {
-        'ctx': lambda *a: '{}',
-        'disable': lambda *a: True,
-        'csv_sep': lambda *a: ';',
-        'csv_esc': lambda *a: '"',
-        'backup_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.csv',
-        'reject_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.rej',
-        'log_filename': lambda *a: 'sample-%Y%m%d_%H%M%S.log',
-        'notes': lambda *a: False,
+        'ctx': '{}',
+        'disable': True,
+        'csv_sep': ';',
+        'csv_esc': '"',
+        'backup_filename': 'sample-%Y%m%d_%H%M%S.csv',
+        'reject_filename': 'sample-%Y%m%d_%H%M%S.rej',
+        'log_filename': 'sample-%Y%m%d_%H%M%S.log',
+        'notes': False,
     }
 
     def onchange_context(self, cr, uid, ids, val, context=None):
@@ -158,6 +160,85 @@ class import_list(osv.osv):
 
         return {'warning': False}
 
+    def _prepare_structure_line(self, cr, uid, ids, field, context=None):
+        """
+        Prepare vals to write in document lines.
+        @param field: browse instance of a field
+        @return: dict of vals to write in the document for the field
+        """
+        import_line_obj = self.pool.get('document.import.list.line')
+        line_vals = {
+            'name': field.name,
+            'field_id': field.id,
+        }
+        onchange_res = import_line_obj.onchange_model_field(cr, uid, [], field.id, context=context)
+        line_vals.update(onchange_res['value'])
+        return line_vals
+
+    def _get_model_fields(self, cr, uid, model_id, context=None):
+        fields_obj = self.pool.get('ir.model.fields')
+        ctx_import = context.copy()
+        ctx_import.update({'import': True})
+
+        all_field_ids = fields_obj.search(cr, uid,
+            [('model_id', '=', model_id),
+             ('readonly', '=', False)],
+            context=ctx_import, order='name asc')
+        return all_field_ids
+
+    def complete_structure_from_model(self, cr, uid, ids, context=None):
+        context = context or {}
+        if not isinstance(ids, list):
+            ids = [ids]
+        fields_obj = self.pool.get('ir.model.fields')
+        for import_list in self.browse(cr, uid, ids, context=context):
+            existing_lines = import_list.line_ids
+            struct_fields_ids = self._get_model_fields(cr, uid, import_list.model_id.id, context)
+            struct_fields = fields_obj.browse(cr, uid, struct_fields_ids, context)
+
+            existing_line_names = [f.name for f in existing_lines]
+
+            lines = []
+            # filter fields that match both list
+            # then prepare those lines to be updated
+            fields_to_replace = [(ef, sf) for ef in existing_lines for sf in struct_fields if ef.name[:].split('/')[0].split('.')[0] == sf.name]
+            for field in fields_to_replace:
+                line_vals = self._prepare_structure_line(cr, uid, ids, field[1], context=context)
+                line_vals.update({'name': field[0].name})  # ensure that we keep the csv header name
+                lines.append((1, field[0].id, line_vals))
+
+            # list fields that are mandatory but not listed in the csv file
+            missing_fields = [sf for sf in struct_fields if sf.name not in existing_line_names and sf.required == 't']
+            for field in missing_fields:
+                line_vals = self._prepare_structure_line(cr, uid, ids, field, context=context)
+                lines.append((0, 0, line_vals))
+
+            self.write(cr, uid, import_list.id,
+                       {'line_ids': lines},
+                       context=context)
+        return True
+
+    def generate_structure_from_model(self, cr, uid, ids, context=None):
+        fields_obj = self.pool.get('ir.model.fields')
+        for import_list in self.browse(cr, uid, ids, context=context):
+            existing_fields_ids = [il_field.id for il_field in [l.field_id for l in import_list.line_ids]]
+            all_fields_ids = self._get_model_fields(cr, uid, import_list.model_id.id, context=context)
+            # keep only non existing fields but keep the sort
+            fields_to_add_ids = [f_id for f_id in all_fields_ids if f_id not in existing_fields_ids]
+
+            lines = []
+            for field in fields_obj.browse(cr, uid, fields_to_add_ids, context=context):
+                line_vals = self._prepare_structure_line(cr, uid, ids, field, context=context)
+                if line_vals:
+                    lines.append((0, 0, line_vals))
+
+            self.write(cr, uid, import_list.id,
+                       {'line_ids': lines},
+                       context=context)
+
+        return True
+
+
 import_list()
 
 
@@ -180,7 +261,7 @@ class import_list_line(osv.osv):
     }
 
     _defaults = {
-        'relation': lambda *a: '',
+        'relation': '',
     }
 
     # When select field is a relation, force domain for related field

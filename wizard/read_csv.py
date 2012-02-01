@@ -40,6 +40,7 @@ class ReadCsv(osv.osv_memory):
 
     _columns = {
         'import_file': fields.binary('Filename', required=True),
+        'auto_completion': fields.boolean('Automatic Completion', help="Auto-complete the fields and relations based on the header names if the header names are the same as the OpenERP field names."),
     }
 
     def read_header(self, cr, uid, ids, context=None):
@@ -54,7 +55,7 @@ class ReadCsv(osv.osv_memory):
         fpcsv.seek(0)
 
         sep = chr(ord(implist.csv_sep[0]))
-        esc = implist.csv_sep and chr(ord(implist.csv_esc[0])) or None
+        esc = implist.csv_esc and chr(ord(implist.csv_esc[0])) or None
 
         try:
             csvfile = csv.reader(base64.decodestring(cur.import_file).splitlines(), delimiter=sep, quotechar=esc)
@@ -72,6 +73,9 @@ class ReadCsv(osv.osv_memory):
             print 'Exception: %s' % str(e)
         finally:
             fpcsv.close()
+
+        if cur.auto_completion:
+            implist_obj.complete_structure_from_model(cr, uid, implist.id, context=context)
 
         return {'type': 'ir.actions.act_window_close'}
 

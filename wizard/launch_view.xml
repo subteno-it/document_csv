@@ -35,7 +35,9 @@
                     <field name="import_list" nolabel="1" />
                     <separator string="Select file to import" colspan="4"/>
                     <field name="import_file" nolabel="1" />
-                    <separator string="Email to send notificaiton when import is finished" colspan="4"/>
+                    <separator string="Translation to update from this file" colspan="4"/>
+                    <field name="lang_id" widget="selection" nolabel="1"/>
+                    <separator string="Email to send notification when import is finished" colspan="4"/>
                     <field name="email_result" nolabel="1" />
                     <separator string="" colspan="4" />
                     <group colspan="4" col="6">

@@ -4,6 +4,8 @@
 #    document_csv module for OpenERP, Import structure in CSV
 #    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>)
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
+#    Copyright (C) 2011 Camptocamp (http://www.camptocamp.com)
+#              Guewen Baconnier
 #
 #    This file is a part of document_csv
 #
@@ -88,7 +90,7 @@ class ir_attachment(osv.osv):
             args = {
                 'name': l.name,
                 'field': l.field_id.name,
-                'rel_field': l .field_relation_id.name,
+                'rel_field': l.field_relation_id.name,
                 'type': l.field_id.ttype,
                 'relation': l.field_id.relation,
                 'key': l.refkey,
@@ -113,7 +115,7 @@ class ir_attachment(osv.osv):
             header.append(u'id')
         if rel_uniq_key:
             for x in rel_uniq_key:
-                header.append('%s:id' % x)
+                header.append('%s/id' % x)
 
         for h in fld:
             rej_header.append(h['name'])
@@ -121,11 +123,14 @@ class ir_attachment(osv.osv):
                 header.append(h['field'])
             else:
                 if h['rel_field']:
-                    header.append('%s/%s' % (h['field'], h['rel_field']))
-                elif h['ref'] in ('id', 'db_id'):
-                    header.append('%s:%s' % (h['field'], h['ref']))
+                    base_field = '%s/%s' % (h['field'], h['rel_field'])
                 else:
-                    header.append(h['field'])
+                    base_field = h['field']
+                if h['ref'] == 'db_id':
+                    base_field = '%s/.id' % (base_field,)
+                elif h['ref'] == 'id':
+                    base_field = '%s/id' % (base_field,)
+                header.append(base_field)
 
         _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Object', imp_data.model_id.model)))
         _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Context', context)))
@@ -165,7 +170,7 @@ class ir_attachment(osv.osv):
                     for x in rel_uniq_key:
                         res_tmp = ''
                         for z in rel_uniq_key[x]:
-                            res_tmp += str(c[z])
+                            res_tmp += str(re.sub('\W', '_', c[z].lower()))
                         tmpline.append(res_tmp)
 
                 for f in fld:
