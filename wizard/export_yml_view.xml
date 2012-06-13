@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_document_import_csv_export_yaml_form" model="ir.ui.view">
+            <field name="name">document.import.csv.export.yaml.form</field>
+            <field name="model">document.import.csv.export.yaml</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Export file structure">
+                    <separator string="The export file is available, save it to a local drive" colspan="4"/>
+                    <field name="name" invisible="1"/>
+                    <field name="filename" colspan="4" width="350" fieldname="name" readonly="1"/>
+                    <separator string=""/>
+                    <group colspan="4" col="6">
+                        <label string ="" colspan="2"/>
+                        <button icon="gtk-cancel" special="cancel" string="Close"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_document_import_csv_export_yaml">
+            <field name="name">Export Yaml</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">document.import.csv.export.yaml</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>
