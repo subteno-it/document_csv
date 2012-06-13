@@ -49,7 +49,7 @@
         'wizard/export_yml_view.xml',
         'wizard/import_yml_view.xml',
         'document_view.xml',
-        #'export_view.xml',
+        'export_view.xml',
     ],
     'demo_xml': [
         'demo/document.xml',

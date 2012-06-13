@@ -24,6 +24,7 @@
 import document
 import ir_model
 import ir_attachment
+import export
 
 import report
 import wizard
