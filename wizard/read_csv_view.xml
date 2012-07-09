@@ -32,8 +32,7 @@
             <field name="arch" type="xml">
                 <form string="Import Form">
                     <separator string="Select file to analyse" colspan="4"/>
-                    <field name="import_file" nolabel="1" colspan="4"/>
-                    <field name="auto_completion" />
+                    <field name="import_file" nolabel="1" />
                     <separator string="" colspan="4" />
                     <group colspan="4" col="6">
                         <label string ="" colspan="2"/>

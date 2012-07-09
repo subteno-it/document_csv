@@ -30,7 +30,6 @@ except ImportError:
 import base64
 from tools.translate import _
 
-
 class ExportYaml(osv.osv_memory):
 
     _name = 'document.import.csv.export.yaml'
@@ -41,8 +40,7 @@ class ExportYaml(osv.osv_memory):
     }
 
     def default_get(self, cr, uid, fields_list, context=None):
-        if context is None:
-            context = {}
+        if context is None: context = {}
         res = super(ExportYaml, self).default_get(cr, uid, fields_list, context=context)
 
         try:

@@ -155,7 +155,7 @@
         </record>
 
         <menuitem action="action_document_export_csv" id="menu_document_export_csv"
-            parent="menu_document_import_configuration" sequence="15"/>
+            parent="menu_document_export_configuration" sequence="15"/>
 
     </data>
 </openerp>

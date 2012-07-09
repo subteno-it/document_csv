@@ -26,8 +26,8 @@
 
 from osv import osv
 from tools import ustr
-from tools import email_send as email
 from tools import config
+
 import re
 import time
 import base64
@@ -123,14 +123,13 @@ class ir_attachment(osv.osv):
                 header.append(h['field'])
             else:
                 if h['rel_field']:
-                    base_field = '%s/%s' % (h['field'], h['rel_field'])
-                else:
-                    base_field = h['field']
-                if h['ref'] == 'db_id':
-                    base_field = '%s/.id' % (base_field,)
+                    header.append('%s/%s' % (h['field'], h['rel_field']))
+                elif h['ref'] == 'db_id':
+                    header.append('%s/.id' % (h['field'],))
                 elif h['ref'] == 'id':
-                    base_field = '%s/id' % (base_field,)
-                header.append(base_field)
+                    header.append('%s/id' % (h['field'],))
+                else:
+                    header.append(h['field'])
 
         _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Object', imp_data.model_id.model)))
         _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Context', context)))
@@ -170,13 +169,13 @@ class ir_attachment(osv.osv):
                     for x in rel_uniq_key:
                         res_tmp = ''
                         for z in rel_uniq_key[x]:
-                            res_tmp += str(re.sub('\W', '_', c[z].lower()))
+                            res_tmp += str(c[z])
                         tmpline.append(res_tmp)
 
                 for f in fld:
                     fld_name = c[f['name']]
-                    if fld_name and f['type'] in ('many2one', 'one2many', 'many2many'):
-                        if not c[f['name']].find('.') >= 0:
+                    if f['type'] in ('many2one', 'one2many', 'many2many'):
+                        if not c[f['name']].find('.') > 0:
                             if f['ref'] == 'id':
                                 fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name']])
                     tmpline.append(fld_name)
@@ -311,23 +310,39 @@ class ir_attachment(osv.osv):
         if not self.create(cr, uid, log_args):
             _logger.error('module document_csv: impossible to create the log file!')
 
-        res_email = email_to and [email_to] or imp_data.err_mail
-        if res_email:
-            log_attachment = [(log_name, log_content)]
+        ir_mail_server = self.pool.get('ir.mail_server')
+
+        if email_to or imp_data.err_mail:
+            res_email_to = email_to and [email_to] or False
+
             email_from = imp_data.mail_from
             if not email_from:
-                email_from = config['email_from']
+                email_from = config.get('email_from')
+
+            log_attachment = [(log_name, log_content)]
             legend = {}
             if (not isinstance(res, bool) and res[0] >= 0) and integ:
                 legend['count'] = res[0]
                 subject = imp_data.mail_subject and (imp_data.mail_subject % legend) or 'No subject'
                 body = imp_data.mail_body and (imp_data.mail_body % legend) or 'No body'
+                mail_cc = [imp_data.mail_cc]
             else:
                 subject = imp_data.mail_subject_err and (imp_data.mail_subject_err % legend) or 'No subject'
                 body = imp_data.mail_body_err and (imp_data.mail_body_err % {'error': error}) or 'No body'
+                mail_cc = [imp_data.mail_cc_err]
 
-            if email_from and email_to:
-                email(email_from, res_email, subject, body, attach=log_attachment)
+            if mail_cc and not res_email_to:
+                res_email_to = mail_cc
+                mail_cc = False
+
+            if email_from and res_email_to:
+                msg = ir_mail_server.build_email(email_from=email_from,
+                                                 email_to=res_email_to,
+                                                 email_cc=mail_cc,
+                                                 subject=subject,
+                                                 body=body,
+                                                 attachments=log_attachment)
+                ir_mail_server.send_email(cr, uid, msg, context=context)
                 _logger.debug('module document_csv: Sending mail [OK]')
             else:
                 _logger.warning('module document_csv: Sending mail [FAIL], missing email "from" or "to"')
