@@ -11,7 +11,7 @@
                 <form string="Export file structure">
                     <separator string="The export file is available, save it to a local drive" colspan="4"/>
                     <field name="name" invisible="1"/>
-                    <field name="filename" colspan="4" width="350" fieldname="name" readonly="1"/>
+                    <field name="filename" colspan="4" width="350" filename="name" readonly="1"/>
                     <separator string=""/>
                     <group colspan="4" col="6">
                         <label string ="" colspan="2"/>
