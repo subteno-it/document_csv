@@ -25,7 +25,7 @@
 {
     'name': 'Import csv using document management',
     'version': '1.4.2',
-    'category': 'Document',
+    'category': 'Tools',
     'description': """
     This module can import CSV file and easily than GTK Client
     """,
@@ -55,6 +55,7 @@
         'demo/document.xml',
     ],
     'installable': True,
+    'auto_install': False,
     'active': False,
     'license': 'GPL-3',
 }
