@@ -35,7 +35,6 @@ import csv
 import pooler
 import logging
 
-_logger = logging.getLogger('document_csv')
 
 try:
     from cStringIO import StringIO
@@ -43,17 +42,20 @@ except ImportError:
     from StringIO import StringIO
 
 
+
 class ir_attachment(osv.osv):
     """Inherit this class to made the CSV treatment"""
     _inherit = 'ir.attachment'
 
+    _logger = logging.getLogger('document_csv')
+
     def import_csv(self, cr, uid, format_id, content, email_to, context):
-        _logger.info('Start new CSV import')
+        self._logger.info('Start new CSV import')
 
         # launch process as multithread
         self.on_execute(cr, uid, cr.dbname, format_id, StringIO(base64.decodestring(content)), email_to, context)
 
-        _logger.info('Launch import as thread')
+        self._logger.info('Launch import as thread')
         return True
 
     def on_execute(self, cr, uid, dbname, format_id, cfp, email_to, context=None):
@@ -71,7 +73,7 @@ class ir_attachment(osv.osv):
         import_obj = self.pool.get('document.import.list')
         line_obj = self.pool.get('document.import.list.line')
 
-        _logger.info('module document_csv: begin import new file '.ljust(80, '*'))
+        self._logger.info('module document_csv: begin import new file '.ljust(80, '*'))
         imp_data = import_obj.browse(cr, uid, format_id, context=context)
         context.update(eval(imp_data.ctx))
 
@@ -79,7 +81,7 @@ class ir_attachment(osv.osv):
 
         def log_compose(message):
             logfp.write(time.strftime('[%Y-%m-%d %H:%M:%S] '))
-            logfp.write(message + '\n')
+            logfp.write(message.encode('utf-8') + '\n')
             return message
 
         # Read all field name in the list
@@ -129,32 +131,32 @@ class ir_attachment(osv.osv):
                 elif h['ref'] == 'id':
                     header.append('%s/id' % (h['field'],))
                 else:
-                    header.append(h['field'])
+                    header.append(h['field'].encode('utf-8'))
 
-        _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Object', imp_data.model_id.model)))
-        _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Context', context)))
-        _logger.debug('module document_csv: ' + log_compose('Columns header original : %s' % ', '.join(rej_header)))
-        _logger.debug('module document_csv: ' + log_compose('Columns header translate: %s' % ', '.join(header)))
-        _logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Unique key (XML id)', uniq_key)))
-        _logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Send report to', email_to)))
+        self._logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Object', imp_data.model_id.model)))
+        self._logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Context', context)))
+        self._logger.debug('module document_csv: ' + log_compose('Columns header original : %s' % ', '.join(rej_header)))
+        self._logger.debug('module document_csv: ' + log_compose('Columns header translate: %s' % ', '.join(header)))
+        self._logger.debug('module document_csv: ' + log_compose('%s: %r' % ('Unique key (XML id)', uniq_key)))
+        self._logger.debug('module document_csv: ' + log_compose('%s: %s' % ('Send report to', email_to)))
 
         # Compose the line from the csv import
         lines = []
         rej_lines = []
 
         sep = chr(ord(imp_data.csv_sep[0]))
-        _logger.debug('module document_csv: ' + log_compose('Separator: %s ' % imp_data.csv_sep))
+        self._logger.debug('module document_csv: ' + log_compose('Separator: %s ' % imp_data.csv_sep))
 
         esc = None
         if imp_data.csv_esc:
             esc = chr(ord(imp_data.csv_esc[0]))
-            _logger.debug('module document_csv: ' + log_compose('Escape: %s ' % imp_data.csv_esc))
+            self._logger.debug('module document_csv: ' + log_compose('Escape: %s ' % imp_data.csv_esc))
 
         error = False
         integ = True
         try:
-            _logger.debug('module document_csv: ' + log_compose('Read the CSV file'))
-            _logger.debug('module document_csv: header: %r ***(%d)***' % (header, len(header)))
+            self._logger.debug('module document_csv: ' + log_compose('Read the CSV file'))
+            self._logger.debug('module document_csv: header: %r ***(%d)***' % (header, len(header)))
             csvfile = csv.DictReader(cfp, delimiter=sep, quotechar=esc)
             for c in csvfile:
                 tmpline = []
@@ -163,7 +165,7 @@ class ir_attachment(osv.osv):
                     res_tmp = ''
                     for x in uniq_key:
                         res_tmp += str(re.sub('\W', '_', c[x].lower()))
-                    tmpline.append(res_tmp)
+                    tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.', '_'), res_tmp))
 
                 if rel_uniq_key:
                     for x in rel_uniq_key:
@@ -173,30 +175,32 @@ class ir_attachment(osv.osv):
                         tmpline.append(res_tmp)
 
                 for f in fld:
-                    fld_name = c[f['name']]
+                    fld_name = c[f['name'].encode('utf-8')]
                     if f['type'] in ('many2one', 'one2many', 'many2many'):
-                        if not c[f['name']].find('.') > 0:
+                        if not c[f['name'].encode('utf-8')].find('.') > 0:
                             if f['ref'] == 'id':
-                                fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name']])
+                                fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name'].encode('utf-8')])
                     tmpline.append(fld_name)
-                    rejline.append(c[f['name']])
-                _logger.debug('module document_csv: line: %r ***(%d)***' % (tmpline, len(tmpline)))
+                    rejline.append(c[f['name'].encode('utf-8')])
+                self._logger.debug('module document_csv: line: %r ***(%d)***' % (tmpline, len(tmpline)))
+                for i in range(len(tmpline)):
+                    tmpline[i] = ustr(tmpline[i])
                 lines.append(tmpline)
                 rej_lines.append(rejline)
         except csv.Error, e:
-            _logger.info('module document_csv: ' + log_compose('csv.Error: %r' % e))
-            error = 'csv Error, %r' % e
+            self._logger.info('module document_csv: ' + log_compose('csv.Error: %r' % e))
+            error = 'csv Error, %s' % str(e)
             integ = False
         except KeyError, k:
-            _logger.info('module document_csv: ' + log_compose('ERROR: The columns "%s" cannot be found, check if no extra space around the column title' % k.args[0]))
-            error = 'KeyError, %r' % k
+            self._logger.info('module document_csv: ' + log_compose('ERROR: The columns "%s" cannot be found, check if no extra space around the column title' % k.args[0]))
+            error = 'KeyError, %s' % str(k)
             integ = False
         except UnicodeError:
-            _logger.info('module document_csv: ' + log_compose('Unicode error, convert your file in UTF-8, and retry'))
+            self._logger.info('module document_csv: ' + log_compose('Unicode error, convert your file in UTF-8, and retry'))
             error = 'Unicode error, convert your file in UTF-8, and retry'
             integ = False
         except Exception, e:
-            _logger.info('module document_csv: ' + log_compose('Error not defined ! : %r' % e))
+            self._logger.info('module document_csv: ' + log_compose('Error not defined ! : %r' % e))
             error = 'Error not defined'
             integ = False
         finally:
@@ -204,16 +208,16 @@ class ir_attachment(osv.osv):
             cfp.close()
 
         if integ:
-            _logger.debug('module document_csv: ' + log_compose('start import'))
+            self._logger.debug('module document_csv: ' + log_compose('start import'))
             # Use new cusrsor to integrate the data, because if failed the backup cannot be perform
             cr_imp = pooler.get_db(cr.dbname).cursor()
             current_model = self.pool.get(imp_data.model_id.model)
             try:
                 if imp_data.err_reject:
-                    _logger.debug('module document_csv: ' + log_compose('Global mode'))
+                    self._logger.debug('module document_csv: ' + log_compose('Global mode'))
                     res = current_model.import_data(cr_imp, uid, header, lines, 'init', '', False, context=context)
                     if res[0] >= 0:
-                        _logger.debug('module document_csv: ' + log_compose('%d line(s) imported !' % res[0]))
+                        self._logger.debug('module document_csv: ' + log_compose('%d line(s) imported !' % res[0]))
                         cr_imp.commit()
                     else:
                         cr_imp.rollback()
@@ -221,22 +225,22 @@ class ir_attachment(osv.osv):
                         for key, val in res[1].items():
                             d += ('\t%s: %s\n' % (str(key), str(val)))
                         error = 'Error trying to import this record:\n%s\nError Message:\n%s\n\n%s' % (d, res[2], res[3])
-                        _logger.error('module document_csv: ' + log_compose('%r' % ustr(error)))
+                        self._logger.error('module document_csv: ' + log_compose('%r' % ustr(error)))
 
                     if current_model._parent_store:
-                        _logger.debug('module document_csv: ' + log_compose('Compute the parent_store'))
+                        self._logger.debug('module document_csv: ' + log_compose('Compute the parent_store'))
                         current_model._parent_store_compute(cr)
                 else:
                     rejfp = StringIO()
                     count_success = 0
                     count_errors = 0
-                    _logger.debug('module document_csv: ' + log_compose('Unit mode'))
+                    self._logger.debug('module document_csv: ' + log_compose('Unit mode'))
                     rej_file = csv.writer(rejfp, delimiter=sep, quotechar=esc, quoting=csv.QUOTE_NONNUMERIC)
-                    rej_file.writerow(rej_header)
+                    rej_file.writerow([x.encode('utf-8') for x in rej_header])
 
                     cpt_lines = 0
                     for li in lines:
-                        _logger.debug('module document_csv: Import line %d' % (cpt_lines + 1))
+                        self._logger.debug('module document_csv: Import line %d' % (cpt_lines + 1))
                         try:
                             res = current_model.import_data(cr_imp, uid, header, [li], 'init', '', False, context=context)
                         except Exception, e:
@@ -249,17 +253,17 @@ class ir_attachment(osv.osv):
                             count_errors += 1
                             cr_imp.rollback()
                             log_compose(4 * '*')
-                            log_compose('Error line %d: %s' % (cpt_lines + 2, ', '.join(rej_lines[cpt_lines])))
-                            log_compose('Error message: %s' % res[2])
+                            log_compose('Error line %d: %s' % (cpt_lines + 2, ', '.join([x.decode('utf-8') for x in rej_lines[cpt_lines]])))
+                            log_compose('Error message: %s' % res[2].encode('utf-8'))
                             rej_file.writerow(rej_lines[cpt_lines])
                         cpt_lines += 1
 
                     log_compose(4 * '*')
-                    _logger.debug('module document_csv: ' + log_compose('%d line(s) imported !' % count_success))
-                    _logger.debug('module document_csv: ' + log_compose('%d line(s) rejected !' % count_errors))
-                    if current_model._parent_store:
-                        _logger.debug('module document_csv: ' + log_compose('Compute the parent_store'))
-                        current_model._parent_store_compute(cr)
+                    self._logger.debug('module document_csv: ' + log_compose('%d line(s) imported !' % count_success))
+                    self._logger.debug('module document_csv: ' + log_compose('%d line(s) rejected !' % count_errors))
+                    #if current_model._parent_store:
+                    #    self._logger.debug('module document_csv: ' + log_compose('Compute the parent_store'))
+                    #    current_model._parent_store_compute(cr)
 
                     if count_errors:
                         rej_name = time.strftime(imp_data.reject_filename)
@@ -272,29 +276,29 @@ class ir_attachment(osv.osv):
                             'datas': rej_enc,
                         }
                         if not self.create(cr, uid, rej_args):
-                            _logger.error('module document_csv: impossible to create the reject file!')
+                            self._logger.error('module document_csv: impossible to create the reject file!')
 
             except Exception, e:
                 cr_imp.rollback()
                 error = e.message
-                _logger.error(log_compose(e.message))
+                self._logger.error(log_compose(e.message))
             finally:
                 cr_imp.close()
 
-            _logger.debug('module document_csv: ' + log_compose('end import'))
+            self._logger.debug('module document_csv: ' + log_compose('end import'))
         else:
-            _logger.info('module document_csv: ' + log_compose('import canceled, correct these errors and retry'))
+            self._logger.info('module document_csv: ' + log_compose('import canceled, correct these errors and retry'))
 
         try:
             if imp_data.backup:
                 # TODO backup this file, only in memory for now
                 bck_file = time.strftime(imp_data.backup_filename)
                 #self.write(cr, uid, ids, {'name': bck_file, 'datas_fname':bck_file, 'parent_id': imp_data.backup_dir_id.id}, context=context)
-                _logger.debug('module document_csv: ' + log_compose('backup file: %s ' % bck_file))
+                self._logger.debug('module document_csv: ' + log_compose('backup file: %s ' % bck_file))
             else:
-                _logger.debug('module document_csv: ' + log_compose('file deleted !'))
+                self._logger.debug('module document_csv: ' + log_compose('file deleted !'))
         except Exception, e:
-            _logger.info('module document_csv: ' + log_compose('Error when backup database ! : %r' % e))
+            self._logger.info('module document_csv: ' + log_compose('Error when backup database ! : %r' % e))
 
         ## save the log file
         log_name = time.strftime(imp_data.log_filename)
@@ -308,7 +312,7 @@ class ir_attachment(osv.osv):
             'datas': log_enc,
         }
         if not self.create(cr, uid, log_args):
-            _logger.error('module document_csv: impossible to create the log file!')
+            self._logger.error('module document_csv: impossible to create the log file!')
 
         ir_mail_server = self.pool.get('ir.mail_server')
 
@@ -343,12 +347,12 @@ class ir_attachment(osv.osv):
                                                  body=body,
                                                  attachments=log_attachment)
                 ir_mail_server.send_email(cr, uid, msg, context=context)
-                _logger.debug('module document_csv: Sending mail [OK]')
+                self._logger.debug('module document_csv: Sending mail [OK]')
             else:
-                _logger.warning('module document_csv: Sending mail [FAIL], missing email "from" or "to"')
+                self._logger.warning('module document_csv: Sending mail [FAIL], missing email "from" or "to"')
 
         # Add trace on the log, when file was integrate
-        _logger.debug('module document_csv: end import new file '.ljust(80, '*'))
+        self._logger.debug('module document_csv: end import new file '.ljust(80, '*'))
 
         cr.commit()
         cr.close()
