@@ -34,6 +34,9 @@ class ir_model_fields(osv.osv):
         if context is None:
             context = {}
 
+        if isinstance(model_id, list):
+            model_id = model_id[0]
+
         model_obj = self.pool.get('ir.model')
         inherits = self.pool.get(model_obj.read(cr, uid, model_id, ['model'])['model'])._inherits
         mod_ids = [model_id]
@@ -49,8 +52,11 @@ class ir_model_fields(osv.osv):
             context = {}
 
         if context.get('import'):
-            model_id = [x[2] for x in args if x[0] == 'model_id'][0]
-            mod_ids = self.search_inherits(cr, uid, model_id, context=context)
+            model_id = [x[2] for x in args if x[0] == 'model_id']
+            if not model_id:
+                return super(ir_model_fields, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
+
+            mod_ids = self.search_inherits(cr, uid, model_id[0], context=context)
             args = [x for x in args if x[0] != 'model_id']
             args.append(('model_id', 'in', mod_ids))
         return super(ir_model_fields, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
@@ -63,8 +69,11 @@ class ir_model_fields(osv.osv):
             context = {}
 
         if context.get('import'):
-            model_id = [x[2] for x in args if x[0] == 'model_id'][0]
-            mod_ids = self.search_inherits(cr, uid, model_id, context=context)
+            model_id = [x[2] for x in args if x[0] == 'model_id']
+            if not model_id:
+                return super(ir_model_fields, self).name_search(cr, uid, name, args, operator, context, limit)
+
+            mod_ids = self.search_inherits(cr, uid, model_id[0], context=context)
             args = [('model_id', 'in', mod_ids)]
         return super(ir_model_fields, self).name_search(cr, uid, name, args, operator, context, limit)
 

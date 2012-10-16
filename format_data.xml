@@ -36,6 +36,11 @@
             <field name="type">date</field>
         </record>
 
+        <record id="format_date_en" model="document.import.format">
+            <field name="name">%m/%d/%Y</field>
+            <field name="type">date</field>
+        </record>
+
         #
         # Hour
         #

@@ -26,6 +26,7 @@ from osv import osv
 from osv import fields
 import base64
 import csv
+from tools.translate import _
 
 try:
     from cStringIO import StringIO
@@ -46,8 +47,8 @@ class ReadCsv(osv.osv_memory):
         """
         read the CSV header, and insert into the current structure
         """
-        print 'active_id: %s' % context.get('active_id', 0)
         implist_obj = self.pool.get('document.import.list')
+        model_field_obj = self.pool.get('ir.model.fields')
         implist = implist_obj.browse(cr, uid, context.get('active_id'), context=context)
         cur = self.browse(cr, uid, ids[0], context=context)
         fpcsv = StringIO(base64.decodestring(cur.import_file))
@@ -59,11 +60,43 @@ class ReadCsv(osv.osv_memory):
         try:
             csvfile = csv.reader(base64.decodestring(cur.import_file).splitlines(), delimiter=sep, quotechar=esc)
             res = []
+            args = {}
             for c in csvfile:
-                args = {'line_ids': [(0, 0, {'name': x}) for x in c]}
+                # If columns name id, we use at key
+                find_id = [x for x in c if x == 'id']
+                if find_id:
+                    args['key_field_name'] = 'id'
+
+                # if header have been made for importcsv (openobject-library), we can match all fields at 100%
+                args['line_ids'] = []
+                for x in c:
+                    if x == 'id':
+                        continue
+
+                    cur_line = {'name': x}
+                    field_split = x.split(':')
+                    if len(field_split) == 1:
+                        field_split = x.split('/')
+
+                    model_inherits = model_field_obj.search_inherits(cr, uid, implist.model_id.id, context=context)
+                    field_id = model_field_obj.search(cr, uid, [('model_id', 'in', model_inherits), ('name', '=', field_split[0])], context=context)
+                    if not field_id:
+                        raise osv.except_osv(_('Error'), _('Field %s not found') % field_split[0])
+
+                    cur_line['field_id'] = field_id[0]
+                    field_br = model_field_obj.browse(cr, uid, field_id[0], context=context)
+                    if len(field_split) == 2:
+                        cur_line['relation'] = field_split[1]
+                        # retrieve the real objet for the relation
+                        relation_ids = self.pool.get('ir.model').search(cr, uid, [('model', '=', field_br.relation)], context=context)
+                        if not relation_ids:
+                            raise osv.except_osv(_('Error'), _('Model %s not found!') % field_br.relation)
+                        cur_line['model_relation_id'] = relation_ids[0]
+
+                    args['line_ids'].append((0, 0, cur_line))
+
                 break
 
-            print args
             implist_obj.write(cr, uid, [context.get('active_id')], args, context=context)
 
         except csv.Error, e:

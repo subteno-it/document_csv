@@ -53,9 +53,9 @@ class ir_attachment(osv.osv):
         self._logger.info('Start new CSV import')
 
         # launch process as multithread
+        self._logger.info('Launch import as thread')
         self.on_execute(cr, uid, cr.dbname, format_id, StringIO(base64.decodestring(content)), email_to, context)
 
-        self._logger.info('Launch import as thread')
         return True
 
     def on_execute(self, cr, uid, dbname, format_id, cfp, email_to, context=None):
@@ -152,6 +152,19 @@ class ir_attachment(osv.osv):
             esc = chr(ord(imp_data.csv_esc[0]))
             self._logger.debug('module document_csv: ' + log_compose('Escape: %s ' % imp_data.csv_esc))
 
+        def real_id(value, model):
+            """
+            Find if we have a prefix
+            """
+            if value.startswith('.'):  # Don't protect id
+                return value
+            if value.find(model.replace('.', '_')) >= 0:  # We have prefix, return the original string
+                if value.find('.') >= 0:
+                    return value
+                else:
+                    return '.' + value
+            return '.%s_%s' % (model.replace('.', '_'), value)
+
         error = False
         integ = True
         try:
@@ -164,8 +177,8 @@ class ir_attachment(osv.osv):
                 if uniq_key:
                     res_tmp = ''
                     for x in uniq_key:
-                        res_tmp += str(re.sub('\W', '_', c[x].lower()))
-                    tmpline.append('%s_%s' % (imp_data.model_id.model.replace('.', '_'), res_tmp))
+                        res_tmp += str(re.sub('\W', '_', c[x]))
+                    tmpline.append(str(real_id(res_tmp, imp_data.model_id.model)))
 
                 if rel_uniq_key:
                     for x in rel_uniq_key:
@@ -179,12 +192,18 @@ class ir_attachment(osv.osv):
                     if f['type'] in ('many2one', 'one2many', 'many2many'):
                         if not c[f['name'].encode('utf-8')].find('.') > 0:
                             if f['ref'] == 'id':
-                                fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name'].encode('utf-8')])
+                                # If object name is available as prefix don't add it
+                                fld_name = str(real_id(c[f['name']].encode('utf-8'), f['relation']))
+                                #fld_name = '%s_%s' % (f['relation'].replace('.', '_'), c[f['name'].encode('utf-8')])
                     tmpline.append(fld_name)
                     rejline.append(c[f['name'].encode('utf-8')])
+
                 self._logger.debug('module document_csv: line: %r ***(%d)***' % (tmpline, len(tmpline)))
                 for i in range(len(tmpline)):
-                    tmpline[i] = ustr(tmpline[i])
+                    if i == 0:
+                        tmpline[i] = tmpline[i]
+                    else:
+                        tmpline[i] = ustr(tmpline[i])
                 lines.append(tmpline)
                 rej_lines.append(rejline)
         except csv.Error, e:
@@ -353,6 +372,7 @@ class ir_attachment(osv.osv):
 
         # Add trace on the log, when file was integrate
         self._logger.debug('module document_csv: end import new file '.ljust(80, '*'))
+        self._logger.info('Finish import as thread')
 
         cr.commit()
         cr.close()
